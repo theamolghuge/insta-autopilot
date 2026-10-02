@@ -1,0 +1,29 @@
+{
+  "account_id": "ai.news.daily",
+  "handle": "@ai.news.daily",
+  "brand_name": "AI NEWS",
+  "timezone": "UTC",
+  "hashtags": [
+    "#ainews",
+    "#artificialintelligence",
+    "#ai",
+    "#machinelearning",
+    "#genai",
+    "#tech",
+    "#technews",
+    "#llm"
+  ],
+  "max_story_age_hours": 18,
+  "drop_unposted_after_hours": 6,
+  "format_mix": [
+    "media_top",
+    "carousel",
+    "media_top",
+    "text",
+    "carousel",
+    "media_top",
+    "roundup",
+    "media_top"
+  ],
+  "llm_model": "claude-sonnet-5-5"
+}

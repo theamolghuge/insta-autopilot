@@ -17,9 +17,10 @@ content/<account>/queue/NNNN-name/   one folder per post, published in number or
     caption.txt                      caption (max 2,200 characters, 30 hashtags)
 state/<account>.json                 what has been posted (written automatically)
 generator/<account>/                 brand templates and scripts that make the images
+generator/ai-news/                   AI news page: collects news, writes and renders one post per run
 scripts/publish.py                   the poster
 scripts/tokens.py                    checks / refreshes access tokens
-.github/workflows/                   the schedules
+.github/workflows/                   the schedules (publish.yml every 15 min, ai-news.yml every 3 h, tokens.yml weekly)
 ```
 
 Rules the poster follows:
@@ -33,6 +34,8 @@ Rules the poster follows:
 | Secret | What it is |
 |---|---|
 | `IG_TOKEN_FIN_ANCE18` | Instagram access token for @fin.ance18 |
+| `IG_TOKEN_AI_NEWS_DAILY` | Instagram access token for the AI news page |
+| `ANTHROPIC_API_KEY` | optional: lets Claude write the AI news posts (without it, a rule-based writer uses the source headline) |
 | `SECRETS_PAT` | GitHub fine-grained token with **Secrets: read and write** on this repo, so tokens can renew themselves every Monday |
 
 ## Manual controls (Actions tab)
@@ -52,3 +55,18 @@ Rules the poster follows:
 4. Put its posts in `content/my.new.page/queue/`.
 
 Set `"enabled": false` to pause an account.
+
+## AI news page (fully automatic)
+
+`.github/workflows/ai-news.yml` runs every 3 hours on GitHub, no computer needed:
+
+1. reads ~16 AI news feeds, groups the same story from different outlets, ranks by size and freshness,
+   skips anything already covered (`content/ai.news.daily/seen.json`);
+2. writes the post (Claude via `ANTHROPIC_API_KEY`, otherwise rule-based);
+3. renders it in the brand (black, white, yellow; article image on the top 40%) and adds it to
+   `content/ai.news.daily/queue/`;
+4. commits it and publishes it immediately. If that publish fails, the next run retries it (posts older than 6 h are dropped instead).
+
+Turn it on: add the `IG_TOKEN_AI_NEWS_DAILY` secret, then set `"enabled": true` for `ai.news.daily` in `accounts.json`.
+Try it first: Actions > **AI news** > Run workflow > `preview` (images are attached to the run; nothing is posted).
+Brand rules: `brand/ai.news.daily/BRAND.md`. Settings (handle, hashtags, format rotation): `generator/ai-news/config.json`.

@@ -13,6 +13,13 @@ Read `README.md` (how it runs) and `HOW_TO.md` (common jobs) first.
 5. Check `python scripts/publish.py --dry-run --account <account>` works.
 6. Commit and push to `main`. GitHub Actions picks it up automatically.
 
+## AI news page (ai.news.daily)
+Fully automatic: `.github/workflows/ai-news.yml` -> `generator/ai-news/make_post.py` makes and posts one post every 3 hours.
+Don't hand-make batches for it. To change the look, edit `generator/ai-news/brand.py` and follow
+`brand/ai.news.daily/BRAND.md` (black bg, white text, yellow `[highlights]`, Space Grotesk / Inter / JetBrains Mono).
+Test with `python generator/ai-news/make_post.py --out out/test` (add `--stories file.json` to work offline).
+`content/ai.news.daily/seen.json` is written by the workflow; don't edit it by hand.
+
 ## Rules
 - Never put access tokens in files, commits or chat. They live only in GitHub secrets.
 - Never edit `state/*.json` by hand unless asked; the workflow owns it.

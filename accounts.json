@@ -7,6 +7,14 @@
       "timezone": "America/New_York",
       "slots": ["07:00", "09:00", "11:30", "13:00", "15:30", "18:00", "20:00", "21:30"],
       "enabled": true
+    },
+    {
+      "id": "ai.news.daily",
+      "token_secret": "IG_TOKEN_AI_NEWS_DAILY",
+      "timezone": "UTC",
+      "slots": [],
+      "enabled": false,
+      "note": "Posted by .github/workflows/ai-news.yml every 3 hours, not by slots."
     }
   ]
 }

@@ -1,0 +1,112 @@
+name: AI news
+
+# Every 3 hours: collect AI news, make one branded post, commit it, publish it right away.
+# Only touches the AI news account (generator/ai-news/config.json -> account_id).
+# fin.ance18 and any other account keep running from publish.yml as before.
+
+on:
+  schedule:
+    - cron: "23 */3 * * *"     # 00:23, 03:23, 06:23 ... UTC (GitHub may start a few minutes late)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = make + post now, preview = make only and attach images to the run (nothing committed or posted), make-only = make and commit, post on the next run"
+        type: choice
+        options: [normal, preview, make-only]
+        default: normal
+      format:
+        description: "Force a format (leave empty to follow the rotation)"
+        type: choice
+        options: ["", media_top, text, carousel, roundup]
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ai-news              # own group: never cancelled by the 15-minute publish runs
+  cancel-in-progress: false
+
+jobs:
+  news:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -q -r requirements.txt
+
+      - name: Is the account switched on?
+        id: acc
+        run: |
+          python - <<'EOF' >> "$GITHUB_OUTPUT"
+          import json
+          acc = json.load(open("generator/ai-news/config.json"))["account_id"]
+          cfg = next((a for a in json.load(open("accounts.json"))["accounts"] if a["id"] == acc), {})
+          print(f"id={acc}")
+          print(f"enabled={'true' if cfg.get('enabled') else 'false'}")
+          EOF
+
+      - name: Make preview (no commit, no post)
+        if: inputs.mode == 'preview' || steps.acc.outputs.enabled != 'true'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          if [ "${{ steps.acc.outputs.enabled }}" != "true" ] && [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "Account ${{ steps.acc.outputs.id }} is not enabled in accounts.json; skipping." ; exit 0
+          fi
+          F="${{ inputs.format }}"
+          python generator/ai-news/make_post.py --out out/ai-news-preview ${F:+--format $F}
+          cat out/ai-news-preview/caption.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload preview
+        if: inputs.mode == 'preview' || (github.event_name == 'workflow_dispatch' && steps.acc.outputs.enabled != 'true')
+        uses: actions/upload-artifact@v4
+        with:
+          name: ai-news-preview
+          path: out/ai-news-preview/
+          if-no-files-found: ignore
+
+      - name: Make the post
+        id: make
+        if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview'
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          F="${{ inputs.format }}"
+          python generator/ai-news/make_post.py ${F:+--format $F}
+
+      - name: Commit the post
+        id: commit
+        if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview'
+        run: |
+          git config user.name "autopilot-bot"
+          git config user.email "autopilot-bot@users.noreply.github.com"
+          git add -A "content/${{ steps.acc.outputs.id }}"
+          if git diff --cached --quiet; then echo "nothing to commit"; exit 0; fi
+          git commit -q -m "AI news: new post [skip ci]"
+          for i in 1 2 3; do git pull -q --rebase && git push -q && break; sleep 5; done
+          git status -sb | head -1 | grep -q ahead && { echo "push failed"; exit 1; }
+
+      # Posts the waiting item: the one just made, or one a previous run failed to post
+      # (make_post.py throws posts away once they are 6 h old, so nothing stale goes out).
+      - name: Publish it now
+        id: pub
+        if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview' && inputs.mode != 'make-only'
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          export MEDIA_BASE_URL="https://raw.githubusercontent.com/${{ github.repository }}/$(git rev-parse HEAD)"
+          python scripts/publish.py --force --account "${{ steps.acc.outputs.id }}"
+
+      - name: Save posting state
+        if: always() && steps.pub.outputs.changed == 'true'
+        run: |
+          git add state
+          git commit -m "Update posting state [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1
