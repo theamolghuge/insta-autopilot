@@ -1,0 +1,26 @@
+name: Instagram tokens
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"        # every Monday: refresh tokens so they never expire
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "check = test every token, refresh = extend every token by 60 days"
+        type: choice
+        options: [check, refresh]
+        default: check
+
+jobs:
+  tokens:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+          SECRETS_PAT: ${{ secrets.SECRETS_PAT }}
+        run: python scripts/tokens.py ${{ inputs.mode || 'refresh' }}

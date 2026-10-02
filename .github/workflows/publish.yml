@@ -1,0 +1,54 @@
+name: Publish posts
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"     # every 15 minutes (GitHub may run a few minutes late)
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "normal = follow the schedule, dry-run = only show what would post, post-now = post the next item immediately"
+        type: choice
+        options: [normal, dry-run, post-now]
+        default: normal
+      account:
+        description: "Only this account id (leave empty for all)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Publish due posts
+        id: pub
+        env:
+          ALL_SECRETS: ${{ toJSON(secrets) }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.mode }}" = "dry-run" ]; then ARGS="--dry-run"; fi
+          if [ "${{ inputs.mode }}" = "post-now" ]; then ARGS="--force"; fi
+          if [ -n "${{ inputs.account }}" ]; then ARGS="$ARGS --account ${{ inputs.account }}"; fi
+          python scripts/publish.py $ARGS
+
+      - name: Save posting state
+        if: always() && steps.pub.outputs.changed == 'true'
+        run: |
+          git config user.name "autopilot-bot"
+          git config user.email "autopilot-bot@users.noreply.github.com"
+          git add state
+          git commit -m "Update posting state [skip ci]" || exit 0
+          for i in 1 2 3; do git pull --rebase && git push && exit 0; sleep 5; done
+          exit 1

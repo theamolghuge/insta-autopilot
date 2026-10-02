@@ -1,0 +1,12 @@
+{
+  "api_version": "v23.0",
+  "accounts": [
+    {
+      "id": "fin.ance18",
+      "token_secret": "IG_TOKEN_FIN_ANCE18",
+      "timezone": "America/New_York",
+      "slots": ["07:00", "09:00", "11:30", "13:00", "15:30", "18:00", "20:00", "21:30"],
+      "enabled": true
+    }
+  ]
+}
