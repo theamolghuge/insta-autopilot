@@ -1,0 +1,19 @@
+{
+  "created_at": "2026-10-02T18:14:45Z",
+  "format": "single",
+  "story": {
+    "title": "Apple says it's tightening macOS 'Full Disk Access' controls due to new risks from AI agents",
+    "url": "https://techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents/",
+    "source": "TechCrunch",
+    "published": "2026-10-02T18:11:27Z",
+    "image": "https://techcrunch.com/wp-content/uploads/2022/07/CMC_1580.jpg?resize=1200,800"
+  },
+  "also": [{"source": "Apple Developer", "url": "https://developer.apple.com/news/?id=p6zjojqw", "title": "Updates to Full Disk Access in macOS"}],
+  "post": {
+    "kicker": "Safety",
+    "headline": "Apple is [tightening Full Disk Access] on Macs, warning that [AI agents] make the setting riskier",
+    "caption_summary": "Apple says it will add new controls to Full Disk Access, the macOS permission that lets an app see a user's files, mail, messages and even browsing history.\n\nThe setting was built so backup apps could work properly. Apple says some developers now use it in ways that expose everything on a Mac without users fully understanding it.\n\nGoing forward, granting an app that level of access will require \"very explicit user action,\" according to a post on Apple's developer site. Apple did not give a timeline.\n\nThe company tied the change directly to AI: as agents become more capable and autonomous, it says the risks of this kind of access will grow substantially.\n\nThe move follows an Inc. columnist's report that Meta's Muse agent on Mac knew the content of his private messages, a claim Meta disputed, and a Wired report on a flaw in ChatGPT's Mac app that could have exposed sensitive data.",
+    "question": "Would you give an AI agent full access to your computer?",
+    "hashtags": ["#apple", "#macos", "#aiagents", "#privacy"]
+  }
+}
