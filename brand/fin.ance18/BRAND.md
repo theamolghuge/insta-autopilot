@@ -26,7 +26,7 @@
 
 - Fonts: DM Serif Display (headlines, numbers), Source Serif 4 (body), Inter (labels). All Google Fonts, OFL licensed, bundled in `generator/fin.ance18/fonts/`.
 - Size: 1080 x 1350 (4:5 portrait). JPEG only.
-- Every slide: topic label top-left, `@fin.ance18` bottom-left, slide counter bottom-right on carousels, "Educational content, not financial advice." under the handle.
+- Every slide: topic label top-left, `@fin.ance18` bottom-left, slide counter bottom-right on carousels. No disclaimer line on the image (it stays in the bio).
 - Templates: `quote()`, `stat()`, `cover()`, `point()`, `cta()`.
 
 ## Content rules

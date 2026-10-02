@@ -94,16 +94,16 @@ class Canvas:
     def label(self, text, x, y, kind="sans_bold", size=26, color=ACCENT, spacing=3, anchor="la"):
         self.texts.append(("label", x, y, text, font(kind, size), color, spacing, anchor))
 
-    def chrome(self, kicker=None, page=None, swipe=False, disclaimer=True):
+    def chrome(self, kicker=None, page=None, swipe=False, disclaimer=False):
         if kicker:
             self.label(kicker.upper(), M, 92)
             self.line = (M, 140)
         # footer
-        self.label(HANDLE, M, H - 92, kind="sans", size=26, color=INK, spacing=0)
+        self.label(HANDLE, M, H - 80, kind="sans", size=26, color=INK, spacing=0)
         if page:
-            self.label(page, W - M, H - 92, kind="sans", size=26, color=MUTED, spacing=0, anchor="ra")
+            self.label(page, W - M, H - 80, kind="sans", size=26, color=MUTED, spacing=0, anchor="ra")
         elif swipe:
-            self.label("Swipe  →", W - M, H - 92, kind="sans_bold", size=26, color=ACCENT, spacing=1, anchor="ra")
+            self.label("Swipe  →", W - M, H - 80, kind="sans_bold", size=26, color=ACCENT, spacing=1, anchor="ra")
         if disclaimer:
             self.label("Educational content, not financial advice.", M, H - 52, kind="sans", size=19, color=MUTED, spacing=0)
 
