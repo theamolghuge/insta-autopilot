@@ -58,22 +58,3 @@ Rules the poster follows:
 4. Put its posts in `content/my.new.page/queue/`.
 
 Set `"enabled": false` to pause an account.
-
-## AI news page (fully automatic)
-
-No computer needed. Every 3 hours:
-
-1. A **Claude scheduled task** (set up in Claude, instructions in `generator/ai-news/CLAUDE_TASK.md`) researches
-   the latest AI news, picks the biggest story not covered yet (`content/ai.news.daily/seen.json`), writes the
-   post and pushes a brief to `content/ai.news.daily/briefs/`.
-2. That push starts `.github/workflows/ai-news.yml`: it downloads the article's pictures, renders the slides in
-   the brand (`brand/ai.news.daily/BRAND.md`), commits them to the queue and publishes right away.
-3. Safety net: 45 minutes after each Claude run the workflow checks that something was posted in the last 2.5 h.
-   If not, it collects the news itself and posts a simpler version (Claude-written if `ANTHROPIC_API_KEY` is set).
-
-Formats: single post card, carousel, and Reels (`video`): an official company clip inside the post card,
-or a slow zoom over the article picture. Images and videos are not stored on `main`: each run commits them
-alone to the `media` branch (replaced every time) and Instagram fetches them through jsDelivr.
-
-Turn it on: add the `IG_TOKEN_AI_NEWS_DAILY` secret, then set `"enabled": true` for `ai.news.daily` in `accounts.json`.
-Try it first: Actions > **AI news** > Run workflow > `preview` (images are attached to the run; nothing is posted).
