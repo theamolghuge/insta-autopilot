@@ -1,0 +1,29 @@
+{
+  "created_at": "2026-10-02T16:06:00Z",
+  "format": "single",
+  "story": {
+    "title": "OpenAI cuts ties with 3 safety researchers, WSJ reports",
+    "url": "https://techcrunch.com/2026/10/01/openai-cuts-ties-with-three-safety-researchers-wsj-reports/",
+    "source": "TechCrunch",
+    "published": "2026-10-01T18:14:42Z",
+    "image": "https://techcrunch.com/wp-content/uploads/2026/05/openai-logo-code-background.jpg?resize=1200,798"
+  },
+  "also": [
+    {
+      "source": "The Neuron",
+      "url": "https://www.theneuron.ai/digest/everything-that-happened-in-ai-today-thursday-october-1-2026/",
+      "title": "Everything That Happened in AI Today (Thursday, October 1, 2026)"
+    }
+  ],
+  "post": {
+    "kicker": "Safety",
+    "headline": "OpenAI has [parted ways with three safety researchers] who allegedly shared confidential information with an outside AI safety group, the WSJ reports.",
+    "caption_summary": "OpenAI has let go of three researchers from its safety team, The Wall Street Journal reported on Thursday. They allegedly shared confidential company information with a third-party AI safety organization.\n\nIn a statement, OpenAI said an internal investigation confirmed the three had mishandled sensitive information outside established company procedures, breaking the trust essential to its work.\n\nThe report did not name the researchers, the organization, or what information was involved.\n\nThe exits come two days after The New York Times reported that OpenAI executives brushed aside employee warnings about its safety practices. OpenAI told the Times it takes security concerns seriously.\n\nIt is not the first time: in 2024, OpenAI fired researchers Leopold Aschenbrenner and Pavel Izmailov over alleged leaks, The Information reported.",
+    "question": "Where should the line be between transparency and company secrets?",
+    "hashtags": [
+      "#openai",
+      "#aisafety",
+      "#chatgpt"
+    ]
+  }
+}
