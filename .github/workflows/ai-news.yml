@@ -1,12 +1,17 @@
 name: AI news
 
-# Every 3 hours: collect AI news, make one branded post, commit it, publish it right away.
-# Only touches the AI news account (generator/ai-news/config.json -> account_id).
-# fin.ance18 and any other account keep running from publish.yml as before.
+# AI news page. Every 3 hours a Claude scheduled task picks the story, writes the post and pushes a
+# brief to content/ai.news.daily/briefs/ (see generator/ai-news/CLAUDE_TASK.md). That push starts this
+# workflow, which fetches the article image, renders the slides in the brand, commits and publishes.
+# The cron below is only a safety net: if no post went out in the last 2.5 h, it makes one by itself.
+# Only touches the AI news account. fin.ance18 keeps running from publish.yml as before.
 
 on:
+  push:
+    branches: [main]
+    paths: ["content/ai.news.daily/briefs/**"]
   schedule:
-    - cron: "23 */3 * * *"     # 00:23, 03:23, 06:23 ... UTC (GitHub may start a few minutes late)
+    - cron: "50 */3 * * *"     # 00:50, 03:50 ... UTC: 45 min after the Claude task, only acts if it didn't
   workflow_dispatch:
     inputs:
       mode:
@@ -17,7 +22,7 @@ on:
       format:
         description: "Force a format (leave empty to follow the rotation)"
         type: choice
-        options: ["", media_top, text, carousel]
+        options: ["", single, carousel, text]
         default: ""
 
 permissions:
@@ -54,9 +59,9 @@ jobs:
       - name: Make preview (no commit, no post)
         if: inputs.mode == 'preview' || steps.acc.outputs.enabled != 'true'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by the safety net
         run: |
-          if [ "${{ steps.acc.outputs.enabled }}" != "true" ] && [ "${{ github.event_name }}" = "schedule" ]; then
+          if [ "${{ steps.acc.outputs.enabled }}" != "true" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             echo "Account ${{ steps.acc.outputs.id }} is not enabled in accounts.json; skipping." ; exit 0
           fi
           F="${{ inputs.format }}"
@@ -64,7 +69,7 @@ jobs:
           cat out/ai-news-preview/caption.txt >> "$GITHUB_STEP_SUMMARY"
 
       - name: Upload preview
-        if: inputs.mode == 'preview' || (github.event_name == 'workflow_dispatch' && steps.acc.outputs.enabled != 'true')
+        if: github.event_name == 'workflow_dispatch' && (inputs.mode == 'preview' || steps.acc.outputs.enabled != 'true')
         uses: actions/upload-artifact@v4
         with:
           name: ai-news-preview
@@ -75,10 +80,12 @@ jobs:
         id: make
         if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by the safety net
         run: |
           F="${{ inputs.format }}"
-          python generator/ai-news/make_post.py ${F:+--format $F}
+          EXTRA=""
+          if [ "${{ github.event_name }}" = "schedule" ]; then EXTRA="--fallback"; fi
+          python generator/ai-news/make_post.py $EXTRA ${F:+--format $F}
 
       - name: Commit the post
         id: commit

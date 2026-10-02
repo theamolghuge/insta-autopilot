@@ -15,49 +15,45 @@
   Sources credited on every post
   ```
 
-## Visual system: "Minimal" (implemented in `generator/ai-news/brand.py`, theme `minimal`)
+## Visual system (implemented in `generator/ai-news/brand.py`)
+Post format modelled on the big AI news pages (post-card singles, big-headline carousel covers,
+detail in the caption), in our own identity: black, white, yellow highlights, our logo, no verified badge.
+
 | Token | Value | Use |
 |---|---|---|
 | Background | `#000000` black | every slide |
-| Headline | `#FFFFFF` white | headlines |
-| Highlight | `#FFD60A` yellow | important words (wrap them in `[brackets]`), category chip, numbers, brand dot |
-| Body | `#A8A8A8` grey | summaries and point text |
-| Meta | `#6E6E6E` | source, date, page counter |
+| Text | `#FFFFFF` white | all slide text |
+| Highlight | `#FFD60A` yellow | key words (wrap them in `[brackets]`), logo dot |
+| Grey | `#8C8C8C` | handle, source, credits |
 
-**Typography (fixed):**
+**Typography (fixed)**
 | Role | Typeface | Setting |
 |---|---|---|
-| Headline | Inter Tight Bold (700) | 48-68 px, tracking -2.8%, line height 1.08, sentence case |
-| Body | Geist Regular | 40-42 px, line height 1.42 |
-| Labels (chip, source, date, handle, page) | Geist Mono Medium | 24 px |
-| Brand mark | Inter Tight ExtraBold | "AI News" + yellow dot |
+| Carousel cover headline | Inter Tight Black (900), ALL CAPS, centred | 56-84 px, line height 1.02 |
+| Card text | Inter Tight Medium (500); highlights Inter Tight Bold (700) in yellow | 38-60 px, line height 1.25 |
+| Name / handle | Inter Tight Bold 34 px / Geist 28 px grey | |
+| Small labels (source, image credit, page) | Geist Mono SemiBold, letter-spaced | 16-22 px |
 
-Headlines stay moderate and body text stays large, so posts read easily on a phone.
 All fonts are OFL and bundled in `generator/ai-news/fonts/`.
 
-**Layout**
-- 1080 x 1350 (4:5), JPEG.
-- **With a picture:** the article's own image sits in the top 40% as a rounded inset (30 px corners),
-  "AI News" pill on it top-left, `IMAGE: <SOURCE>` credit bottom-right. Text fills the bottom 60%.
-- **No picture available:** the slide becomes text-only. Never a placeholder or generated image.
-- Above every headline: yellow outlined category chip, then `Source · date` in Geist Mono.
-- Footer: thin rule, handle bottom-left, date / page counter / `Swipe →` bottom-right.
-
-Alternative themes `newsroom` (Archivo condensed caps) and `editorial` (Instrument Serif) are kept in
-`brand.py` for reference; switch with `"theme"` in `generator/ai-news/config.json`.
+## Templates (1080 x 1350, JPEG)
+| Template | Layout |
+|---|---|
+| **Post card** | round logo + "AI News" + handle at the top, 1-2 sentences, then the article's picture filling the rest (always at least 40% of the slide), credit `IMAGE: <SOURCE>` on the picture. With no picture: text-only, centred, larger, with `SOURCE:` under it |
+| **Headline cover** | article picture on top fading into black, centred `AI NEWS •` rule, huge ALL-CAPS headline, `SWIPE FOR MORE` |
 
 ## Formats (one story per post, always)
-| Format | What it is |
+| Format | Slides |
 |---|---|
-| `media_top` | single: article image on top 40%, headline + 1-2 sentence summary below (text-only if no image) |
-| `text` | single: headline + summary, no image |
-| `carousel` | deep dive on ONE story: cover, 2-3 points (what happened / why it matters / what to watch), sources + follow slide. Needs the Claude writer; without it a single is made instead |
+| `single` | one post card |
+| `carousel` | headline cover + 2-4 post cards, one fact each, each with its own article picture when there is one |
 
-Default rotation (8 runs = 1 day): image, carousel, image, text, image, carousel, image, text.
+The caption carries the detail: headline, 4-6 short paragraphs, a question, `Source:` line, follow line, hashtags.
+Never a placeholder or generated picture: no real image means a text-only card.
 
 ## Content rules
-- One post every 3 hours, always the biggest story not yet covered (ranked by how many outlets cover it, freshness,
+- One post every 3 hours (written by the Claude scheduled task, see `generator/ai-news/CLAUDE_TASK.md`), always the biggest story not yet covered (ranked by how many outlets cover it, freshness,
   source weight, big names, launch/funding/policy words). Same story from several outlets counts once.
 - Stories older than 18 h are ignored. An unposted post older than 6 h is thrown away (news must be fresh).
 - Every post credits its source on the image and in the caption.
-- Caption: headline, 2-4 sentence summary, `Source:` line, optional question, follow line, up to 12 hashtags.
+- Caption: headline, 4-6 short paragraphs, question, `Source:` line, follow line, up to 12 hashtags.

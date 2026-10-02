@@ -1,16 +1,16 @@
 """Brand renderer for the AI news page.
 
-Black background, white text, important words in yellow. Mark them with [square brackets]:
+Black background, white text, key words in yellow. Mark them with [square brackets]:
     "OpenAI ships [GPT-6] to everyone"
 
-Every post covers ONE story. Slides are 1080 x 1350 (4:5):
-  media_top  picture on the top 40%, text on the bottom 60%   (single post / carousel cover)
-  text       text only                                         (single post without a picture)
-  point      numbered point                                    (carousel inside)
-  cta        sources + follow                                  (carousel end)
+Every post covers ONE story. Slides are 1080 x 1350 (4:5). Two templates:
 
-The look is a THEME (config.json -> "theme"). All themes share colours and rules; they differ in
-typefaces, how the picture sits and how highlights are drawn.
+  card      "post card": logo + name + handle at the top, one or two sentences, then the picture
+            filling the rest of the slide. Without a picture the text sits centred, larger.
+            Used for single posts and for the inside slides of a carousel.
+  headline  carousel cover: picture on top, brand line, big centred ALL-CAPS headline, "SWIPE FOR MORE".
+
+Typography: Inter Tight (headlines + card text), Geist (handle), Geist Mono (small labels). All OFL.
 """
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
@@ -21,73 +21,30 @@ F = HERE / "fonts"
 CONFIG = json.loads((HERE / "config.json").read_text())
 
 W, H = 1080, 1350
-MEDIA_H = int(H * 0.40)                  # 540 px
+MIN_MEDIA = int(H * 0.40)                # a picture always gets at least 40% of the slide
 
 BG = (0, 0, 0)
 WHITE = (255, 255, 255)
 YELLOW = (255, 214, 10)                  # #FFD60A
-GREY = (168, 168, 168)                   # body text
-DIM = (110, 110, 110)                    # meta text
-RULE = (40, 40, 40)
+GREY = (140, 140, 140)
+RULE = (70, 70, 70)
 
 HANDLE = CONFIG["handle"]
+NAME = CONFIG.get("display_name", "AI News")
+PAD = 64
 
-# ------------------------------------------------------------------ themes
-# font spec: (file, {axis: value}, tracking in em)
-THEMES = {
-    # Bold, condensed, all-caps headlines. Feels like a newsroom ticker.
-    "newsroom": {
-        "margin": 72,
-        "head": ("Archivo.ttf", {"Weight": 800, "Width": 68}, -0.005), "head_case": "upper",
-        "head_hl": None, "head_lead": 0.98, "head_sizes": [84, 78, 72, 66, 60, 56],
-        "hl_style": "text",
-        "body": ("Inter.ttf", {"Optical size": 24, "Weight": 400}, 0), "body_size": 40, "body_lead": 1.4,
-        "label": ("Archivo.ttf", {"Weight": 700, "Width": 100}, 0.08), "label_size": 25,
-        "mark": ("Archivo.ttf", {"Weight": 900, "Width": 100}, 0.04),
-        "num": ("Archivo.ttf", {"Weight": 900, "Width": 62}, 0), "num_size": 180,
-        "media": "hard",
-    },
-    # Clean product-launch look: tight sans, rounded inset picture, mono metadata.
-    "minimal": {
-        "margin": 64,
-        "head": ("InterTight.ttf", {"Weight": 700}, -0.028), "head_case": None,
-        "head_hl": None, "head_lead": 1.08, "head_sizes": [68, 64, 60, 56, 52, 48],
-        "hl_style": "text",
-        "body": ("Geist.ttf", {"Weight": 400}, -0.005), "body_size": 40, "body_lead": 1.42,
-        "label": ("GeistMono.ttf", {"Weight": 500}, 0.02), "label_size": 24,
-        "mark": ("InterTight.ttf", {"Weight": 800}, -0.01),
-        "num": ("GeistMono.ttf", {"Weight": 600}, -0.02), "num_size": 30,
-        "media": "inset",
-    },
-    # Magazine look: big serif headline, highlighted words in yellow italic.
-    "editorial": {
-        "margin": 80,
-        "head": ("InstrumentSerif.ttf", {}, -0.012), "head_case": None,
-        "head_hl": ("InstrumentSerif-Italic.ttf", {}, -0.01), "head_lead": 1.0,
-        "head_sizes": [90, 84, 78, 72, 66, 62],
-        "hl_style": "text",
-        "body": ("Inter.ttf", {"Optical size": 24, "Weight": 400}, 0), "body_size": 40, "body_lead": 1.42,
-        "label": ("InterTight.ttf", {"Weight": 600}, 0.14), "label_size": 23,
-        "mark": ("InterTight.ttf", {"Weight": 700}, 0.16),
-        "num": ("InstrumentSerif-Italic.ttf", {}, 0), "num_size": 170,
-        "media": "fade",
-    },
-}
-THEME_NAME = CONFIG.get("theme", "newsroom")
-T = THEMES[THEME_NAME]
-M = T["margin"]
+# (file, {axis: value}, tracking in em)
+HEAD = ("InterTight.ttf", {"Weight": 900}, -0.01)        # cover headline, upper case
+CARD = ("InterTight.ttf", {"Weight": 500}, -0.012)       # card sentence
+CARD_HL = ("InterTight.ttf", {"Weight": 700}, -0.012)    # highlighted words in the card
+NAME_F = ("InterTight.ttf", {"Weight": 700}, -0.01)
+HANDLE_F = ("Geist.ttf", {"Weight": 400}, 0)
+LABEL = ("GeistMono.ttf", {"Weight": 600}, 0.12)
 
-
-def use_theme(name):
-    global T, M, THEME_NAME
-    THEME_NAME, T, M = name, THEMES[name], THEMES[name]["margin"]
-
-
-# ------------------------------------------------------------------ fonts
 _cache = {}
 
 
-def _axis_name(a):
+def _axis(a):
     return a["name"].decode() if isinstance(a["name"], bytes) else a["name"]
 
 
@@ -97,9 +54,9 @@ def font(spec, size):
     if key not in _cache:
         f = ImageFont.truetype(str(F / file), size)
         if axes:
-            cur = {_axis_name(a): a["default"] for a in f.get_variation_axes()}
+            cur = {_axis(a): a["default"] for a in f.get_variation_axes()}
             cur.update(axes)
-            f.set_variation_by_axes([cur[_axis_name(a)] for a in f.get_variation_axes()])
+            f.set_variation_by_axes([cur[_axis(a)] for a in f.get_variation_axes()])
         _cache[key] = f
     return _cache[key], trk * size
 
@@ -134,285 +91,191 @@ def wlen(f, trk, s):
     return f.getlength(s) + trk * max(0, len(s) - 1)
 
 
-# ------------------------------------------------------------------ canvas
-class Slide:
-    def __init__(self, transparent=False):
-        self.img = Image.new("RGBA", (W, H), (0, 0, 0, 0) if transparent else BG + (255,))
+# ------------------------------------------------------------------ text engine
+class Canvas:
+    def __init__(self):
+        self.img = Image.new("RGB", (W, H), BG)
         self.d = ImageDraw.Draw(self.img)
 
     def word(self, x, y, s, f, trk, fill):
         if abs(trk) < 0.01:
             self.d.text((x, y), s, font=f, fill=fill)
             return
-        for i, ch in enumerate(s):                       # keeps kerning: position by prefix width
+        for i, ch in enumerate(s):                       # tracking that keeps kerning
             self.d.text((x + f.getlength(s[:i]) + trk * i, y), ch, font=f, fill=fill)
 
-    def _lines(self, words, spec, hl_spec, size, maxw, case):
+    def lines(self, text, spec, hl_spec, size, maxw, upper=False):
         f, trk = font(spec, size)
-        fh, trkh = font(hl_spec, size) if hl_spec else (f, trk)
+        fh, trkh = font(hl_spec or spec, size)
         sp = f.getlength(" ")
-        lines, cur, w = [], [], 0
-        for wd, h in words:
-            if case == "upper":
-                wd = wd.upper()
+        out, cur, w = [], [], 0
+        for wd, h in parse(text):
+            wd = wd.upper() if upper else wd
             ff, tt = (fh, trkh) if h else (f, trk)
             l = wlen(ff, tt, wd)
             if cur and w + sp + l > maxw:
-                lines.append(cur); cur, w = [], 0
+                out.append(cur); cur, w = [], 0
             w += (sp if cur else 0) + l
             cur.append((wd, h, l, ff, tt))
         if cur:
-            lines.append(cur)
-        return lines, sp
+            out.append(cur)
+        return out, sp
 
-    def rich(self, text, spec, size, y, lead, x=None, maxw=None, color=WHITE, hl_spec=None, case=None,
-             max_lines=None, hl_style="text", center=False):
-        x = M if x is None else x
-        maxw = W - 2 * M if maxw is None else maxw
-        lines, sp = self._lines(parse(text), spec, hl_spec, size, maxw, case)
-        if max_lines and len(lines) > max_lines:
-            lines = lines[:max_lines]
-            wd, h, l, ff, tt = lines[-1][-1]
-            lines[-1][-1] = (wd.rstrip(".,;:") + "...", h, l, ff, tt)
+    def block_h(self, text, spec, hl_spec, size, lead, maxw, upper=False):
+        ls, _ = self.lines(text, spec, hl_spec, size, maxw, upper)
+        return len(ls) * int(size * lead), len(ls)
+
+    def draw(self, text, spec, hl_spec, size, lead, x, y, maxw, upper=False, center=False, color=WHITE):
+        ls, sp = self.lines(text, spec, hl_spec, size, maxw, upper)
         step = int(size * lead)
-        f0, _ = font(spec, size)
-        asc, desc = f0.getmetrics()
-        for i, line in enumerate(lines):
+        for i, line in enumerate(ls):
             lw = sum(t[2] for t in line) + sp * (len(line) - 1)
             cx = x + (maxw - lw) / 2 if center else x
-            yy = y + i * step
-            if hl_style == "marker":                     # yellow block behind runs of highlighted words
-                k = 0
-                while k < len(line):
-                    if line[k][1]:
-                        j, x0 = k, cx + sum(t[2] for t in line[:k]) + sp * k
-                        while j + 1 < len(line) and line[j + 1][1]:
-                            j += 1
-                        x1 = cx + sum(t[2] for t in line[:j + 1]) + sp * j
-                        self.d.rectangle([x0 - size * 0.12, yy + asc * 0.12, x1 + size * 0.12,
-                                          yy + asc + desc * 0.25], fill=YELLOW + (255,))
-                        k = j + 1
-                    else:
-                        k += 1
             for wd, h, l, ff, tt in line:
-                col = (BG if hl_style == "marker" else YELLOW) if h else color
-                self.word(cx, yy, wd, ff, tt, col + (255,))
+                self.word(cx, y + i * step, wd, ff, tt, YELLOW if h else color)
                 cx += l + sp
-        return y + len(lines) * step
+        return y + len(ls) * step
 
-    def measure(self, text, spec, size, lead, maxw=None, hl_spec=None, case=None):
-        maxw = W - 2 * M if maxw is None else maxw
-        lines, _ = self._lines(parse(text), spec, hl_spec, size, maxw, case)
-        return len(lines) * int(size * lead), len(lines)
-
-    def fit_head(self, text, max_h, max_lines=5, maxw=None):
-        for s in T["head_sizes"]:
-            h, n = self.measure(text, T["head"], s, T["head_lead"], maxw, T["head_hl"], T["head_case"])
-            if h <= max_h and n <= max_lines:
-                return s
-        return T["head_sizes"][-1]
-
-    def head(self, text, size, y, maxw=None):
-        return self.rich(text, T["head"], size, y, T["head_lead"], maxw=maxw, hl_spec=T["head_hl"],
-                         case=T["head_case"], hl_style=T["hl_style"])
-
-    def body(self, text, y, max_y, size=None):
-        size = size or T["body_size"]
-        lead = T["body_lead"]
-        n = max(1, int((max_y - y) // (size * lead)))
-        return self.rich(text, T["body"], size, y, lead, color=GREY, max_lines=n)
-
-    def label(self, text, x, y, color=WHITE, spec=None, size=None, anchor="la", upper=True):
-        spec = spec or T["label"]
-        f, trk = font(spec, size or T["label_size"])
-        text = text.upper() if upper else text
+    def label(self, text, x, y, size=20, color=GREY, anchor="la", spec=LABEL):
+        f, trk = font(spec, size)
         tw = wlen(f, trk, text)
-        x = x - tw if anchor == "ra" else x
-        self.word(x, y, text, f, trk, color + (255,))
+        x = x - tw if anchor == "ra" else x - tw / 2 if anchor == "ma" else x
+        self.word(x, y, text, f, trk, color)
         return tw
 
-    def mark(self, x, y, on_media=False):
-        """Brand mark: AI NEWS with the yellow square / dot."""
-        if THEME_NAME == "newsroom":
-            f, trk = font(T["mark"], 26)
-            tw = wlen(f, trk, "AI NEWS")
-            if on_media:
-                self.d.rectangle([x - 14, y - 12, x + 34 + tw + 14, y + 40], fill=BG + (255,))
-            self.d.rectangle([x, y + 4, x + 20, y + 24], fill=YELLOW + (255,))
-            self.word(x + 34, y - 1, "AI NEWS", f, trk, WHITE + (255,))
-        elif THEME_NAME == "minimal":
-            f, trk = font(T["mark"], 26)
-            tw = wlen(f, trk, "AI News")
-            if on_media:
-                self.d.rounded_rectangle([x - 16, y - 12, x + 30 + tw + 18, y + 42], 27, fill=(0, 0, 0, 190))
-            self.d.ellipse([x, y + 7, x + 16, y + 23], fill=YELLOW + (255,))
-            self.word(x + 28, y - 2, "AI News", f, trk, WHITE + (255,))
-        else:
-            f, trk = font(T["mark"], 22)
-            tw = wlen(f, trk, "AI NEWS")
-            self.word(x, y, "AI NEWS", f, trk, WHITE + (255,))
-            self.d.ellipse([x + tw + 10, y + 6, x + tw + 22, y + 18], fill=YELLOW + (255,))
+    # ---------------------------------------------------------- brand pieces
+    def avatar(self, x, y, d=88):
+        """Round profile mark: 'AI' + yellow dot, same as the Instagram profile picture."""
+        self.d.ellipse([x, y, x + d, y + d], fill=(14, 14, 14), outline=(60, 60, 60), width=2)
+        f, _ = font(("InterTight.ttf", {"Weight": 800}, 0), int(d * 0.40))
+        tw = f.getlength("AI")
+        r = d * 0.075
+        total = tw + d * 0.05 + 2 * r
+        x0 = x + (d - total) / 2
+        self.d.text((x0, y + d / 2), "AI", font=f, fill=WHITE, anchor="lm")
+        cx, cy = x0 + tw + d * 0.05 + r, y + d / 2 + d * 0.10
+        self.d.ellipse([cx - r, cy - r, cx + r, cy + r], fill=YELLOW)
 
-    def footer(self, right=None, right_color=DIM):
-        y = H - 84
-        self.d.line([(M, y - 30), (W - M, y - 30)], fill=RULE + (255,), width=2)
-        self.label(HANDLE, M, y, color=WHITE, upper=THEME_NAME != "minimal")
-        if right:
-            self.label(right, W - M, y, color=right_color, anchor="ra", upper=THEME_NAME != "minimal")
+    def header(self, y=PAD):
+        self.avatar(PAD, y)
+        f, trk = font(NAME_F, 34)
+        self.word(PAD + 110, y + 6, NAME, f, trk, WHITE)
+        f2, trk2 = font(HANDLE_F, 28)
+        self.word(PAD + 110, y + 50, HANDLE, f2, trk2, GREY)
+        return y + 88
+
+    def brand_line(self, y):
+        """—— AI NEWS • ——  centred rule with the wordmark."""
+        f, trk = font(("InterTight.ttf", {"Weight": 800}, 0.14), 22)
+        txt = "AI NEWS"
+        tw = wlen(f, trk, txt) + 18
+        x0 = (W - tw) / 2
+        self.word(x0, y - 13, txt, f, trk, WHITE)
+        self.d.ellipse([x0 + tw - 10, y - 4, x0 + tw, y + 6], fill=YELLOW)
+        self.d.line([(PAD, y), (x0 - 22, y)], fill=RULE, width=2)
+        self.d.line([(x0 + tw + 22, y), (W - PAD, y)], fill=RULE, width=2)
+
+    def credit(self, text, x1, y1):
+        f, trk = font(LABEL, 16)
+        text = text.upper()[:40]
+        tw = wlen(f, trk, text)
+        box = Image.new("RGBA", (int(tw + 28), 34), (0, 0, 0, 0))
+        ImageDraw.Draw(box).rounded_rectangle([0, 0, tw + 27, 33], 17, fill=(0, 0, 0, 165))
+        self.img.paste(box, (int(x1 - tw - 28), int(y1 - 34)), box)
+        self.word(x1 - tw - 14, y1 - 27, text, f, trk, (210, 210, 210))
+
+    def save(self, path):
+        self.img.save(path, quality=90, optimize=True)
 
 
-# ------------------------------------------------------------------ media
-def cover_crop(img, w, h):
+# ------------------------------------------------------------------ media helpers
+def cover_crop(img, w, h, focus=0.35):
     img = img.convert("RGB")
     s = max(w / img.width, h / img.height)
-    r = img.resize((int(img.width * s + 0.5), int(img.height * s + 0.5)), Image.LANCZOS)
-    x, y = (r.width - w) // 2, int((r.height - h) * 0.35)   # bias up: faces/products sit high
+    r = img.resize((max(w, int(img.width * s + 0.5)), max(h, int(img.height * s + 0.5))), Image.LANCZOS)
+    x, y = (r.width - w) // 2, int((r.height - h) * focus)
     return r.crop((x, y, x + w, y + h))
 
 
-def ramp(h, start, end):
-    m = Image.new("L", (1, h), 0)
-    for y in range(h):
-        t = 0 if y <= start else 1 if y >= end else (y - start) / (end - start)
-        m.putpixel((0, y), int(255 * t * t * (3 - 2 * t)))
-    return m.resize((W, h))
+def fade(img, top=0, bottom=0):
+    """Fade the top/bottom edge of a picture into black."""
+    w, h = img.size
+    m = Image.new("L", (1, h), 255)
+    for yy in range(h):
+        a = 255
+        if top and yy < top:
+            t = yy / top; a = min(a, int(255 * t * t * (3 - 2 * t)))
+        if bottom and yy > h - bottom:
+            t = (h - yy) / bottom; a = min(a, int(255 * t * t * (3 - 2 * t)))
+        m.putpixel((0, yy), a)
+    return Image.composite(img, Image.new("RGB", (w, h), BG), m.resize((w, h)))
 
 
-def place_media(base, media):
-    style = T["media"]
-    if style == "inset":
-        pad = M - 16
-        w, h = W - 2 * pad, MEDIA_H - pad
-        pic = cover_crop(media, w, h)
-        mask = Image.new("L", (w, h), 0)
-        ImageDraw.Draw(mask).rounded_rectangle([0, 0, w - 1, h - 1], 30, fill=255)
-        base.paste(pic, (pad, pad), mask)
-        return
-    pic = cover_crop(media, W, MEDIA_H)
-    base.paste(pic, (0, 0))
-    if style == "fade":
-        black = Image.new("RGB", (W, MEDIA_H), BG)
-        region = base.crop((0, 0, W, MEDIA_H))
-        base.paste(Image.composite(black, region, ramp(MEDIA_H, MEDIA_H - 220, MEDIA_H)), (0, 0))
-    # soft top shade so the brand mark reads on bright photos
-    top = Image.new("RGB", (W, 160), BG)
-    region = base.crop((0, 0, W, 160))
-    m = ramp(160, 0, 160).point(lambda v: int((255 - v) * 0.55))
-    base.paste(Image.composite(top, region, m), (0, 0))
-
-
-# ------------------------------------------------------------------ slides
-def _meta(sl, s, y):
-    """Category + source line above the headline. Returns y below it."""
-    cat, src = s.get("kicker") or "", s.get("source") or ""
-    if THEME_NAME == "minimal":
-        f, trk = font(T["label"], 24)
-        tw = wlen(f, trk, cat)
-        sl.d.rounded_rectangle([M, y, M + tw + 36, y + 50], 25, outline=YELLOW + (255,), width=2)
-        sl.word(M + 18, y + 9, cat, f, trk, YELLOW + (255,))
-        if src:
-            sl.label(src + (" · " + s["date"].title() if s.get("date") else ""), M + tw + 56, y + 10,
-                     color=DIM, upper=False)
-        return y + 50 + 34
-    sl.label(cat, M, y, color=YELLOW)
-    if src:
-        f, trk = font(T["label"], T["label_size"])
-        sep = "  /  " if THEME_NAME == "newsroom" else "  —  "
-        sl.label(sep + src, M + wlen(f, trk, cat.upper()), y, color=DIM)
-    return y + T["label_size"] + (30 if THEME_NAME == "newsroom" else 36)
-
-
-def _right(s):
-    if s.get("page"):
-        return (s["page"],)
-    if s.get("swipe"):
-        return ("Swipe  →" if THEME_NAME == "minimal" else "SWIPE  →", YELLOW)
-    return (s.get("date") or "",)
-
-
-def _media_top(sl, s):
-    sl.mark(M, 48 if T["media"] != "inset" else 84, on_media=True)
-    if s.get("credit"):                                  # who the photo belongs to, on the photo
-        f, trk = font(T["label"], 17)
-        txt = s["credit"][:40].upper()
-        tw = wlen(f, trk, txt)
-        x1, y1 = W - M - 4, MEDIA_H - 40
-        sl.d.rounded_rectangle([x1 - tw - 24, y1 - 8, x1, y1 + 26], 17, fill=(0, 0, 0, 170))
-        sl.word(x1 - tw - 12, y1 - 1, txt, f, trk, (200, 200, 200, 255))
-    y = MEDIA_H + (54 if T["media"] != "inset" else 40)
-    y = _meta(sl, s, y)
-    bottom = H - 148
-    body = s.get("body") or ""
-    room = bottom - y - (240 if body else 0)
-    hs = sl.fit_head(s["headline"], room, 4)
-    y = sl.head(s["headline"], hs, y) + {"newsroom": 30, "minimal": 34, "editorial": 44}[THEME_NAME]
-    if body and bottom - y > T["body_size"] * 1.3:
-        sl.body(body, y, bottom)
-    sl.footer(*_right(s))
-
-
-def _text(sl, s):
-    sl.mark(M, 64)
-    body = s.get("body") or ""
-    top, bottom = 190, H - 160
-    hs = sl.fit_head(s["headline"], int((bottom - top) * 0.66), 6)
-    hh, _ = sl.measure(s["headline"], T["head"], hs, T["head_lead"], None, T["head_hl"], T["head_case"])
-    bh = sl.measure(body, T["body"], T["body_size"], T["body_lead"])[0] if body else 0
-    block = 70 + hh + (60 + bh if body else 0)
-    y = max(top, top + (bottom - top - block) // 2 - 30)
-    y = _meta(sl, s, y)
-    y = sl.head(s["headline"], hs, y) + 36
-    if body:
-        sl.d.rectangle([M, y, M + 56, y + 5], fill=YELLOW + (255,))
-        sl.body(body, y + 34, bottom)
-    sl.footer(*_right(s))
-
-
-def _point(sl, s):
-    sl.mark(M, 64)
-    num = s.get("num", "01")
-    hs = min(sl.fit_head(s["headline"], 260, 3), T["head_sizes"][1])
-    hh, _ = sl.measure(s["headline"], T["head"], hs, T["head_lead"], None, T["head_hl"], T["head_case"])
-    bsize = T["body_size"] + 2
-    bh = sl.measure(s.get("body") or "", T["body"], bsize, T["body_lead"])[0] if s.get("body") else 0
-    num_h = 80 if THEME_NAME == "minimal" else int(T["num_size"] * 1.05)
-    block = num_h + hh + 40 + bh
-    y = max(170, (H - block) // 2 - 40)
-    if THEME_NAME == "minimal":
-        f, trk = font(T["num"], 30)
-        sl.word(M, y, num, f, trk, YELLOW + (255,))
-        sl.word(M + wlen(f, trk, num) + 8, y, "/ " + s.get("of", "03"), f, trk, DIM + (255,))
+# ------------------------------------------------------------------ templates
+def card(s, path, media=None):
+    """Post card. s: text, credit, source (shown when there's no picture), page."""
+    c = Canvas()
+    text = s["text"]
+    maxw = W - 2 * PAD
+    if media is not None:
+        y = c.header() + 40
+        # text as large as possible while the picture keeps >= 40% of the slide
+        for size in (48, 46, 44, 42, 40, 38):
+            th, n = c.block_h(text, CARD, CARD_HL, size, 1.27, maxw)
+            if y + th + 44 <= H - MIN_MEDIA and n <= 6:
+                break
+        y = c.draw(text, CARD, CARD_HL, size, 1.27, PAD, y, maxw) + 44
+        pic = fade(cover_crop(media, W, H - y), top=18)
+        c.img.paste(pic, (0, y))
+        if s.get("credit"):
+            c.credit(s["credit"], W - 28, H - 28)
     else:
-        f, trk = font(T["num"], T["num_size"])
-        sl.word(M - (6 if THEME_NAME == "newsroom" else 0), y, num, f, trk, YELLOW + (255,))
-    y += num_h
-    y = sl.head(s["headline"], hs, y) + 40
-    if s.get("body"):
-        sl.body(s["body"], y, H - 160, size=bsize)
-    sl.footer(*_right(s))
+        for size in (60, 56, 52, 48, 44):
+            th, n = c.block_h(text, CARD, CARD_HL, size, 1.25, maxw)
+            if th <= 760 and n <= 9:
+                break
+        block = 88 + 56 + th + (70 if s.get("source") else 0)
+        y0 = max(PAD, (H - block) // 2 - 20)
+        y = c.header(y0) + 56
+        if s.get("page"):
+            c.label(s["page"], W - PAD, y0 + 30, size=20, anchor="ra")
+        y = c.draw(text, CARD, CARD_HL, size, 1.25, PAD, y, maxw)
+        if s.get("source"):
+            c.label("SOURCE: " + s["source"].upper(), PAD, y + 44, size=22)
+        c.save(path)
+        return
+    if s.get("page"):
+        c.label(s["page"], W - PAD, PAD + 30, size=20, anchor="ra")
+    c.save(path)
 
 
-def _cta(sl, s):
-    sl.mark(M, 64)
-    y = 330
-    y = sl.head(s.get("headline", "Follow for [AI news] every 3 hours"), T["head_sizes"][1], y) + 40
-    sl.body(s.get("body", "One story at a time, sources on every post. Save this and share it with someone who builds with AI."),
-            y, y + 200)
-    y = H - 330
-    sl.label("Sources", M, y, color=YELLOW)
-    y += 46
-    for src in (s.get("sources") or [])[:4]:
-        sl.label(src, M, y, color=GREY, spec=T["body"], size=30, upper=False)
-        y += 44
-    sl.footer(*_right(s))
+def headline(s, path, media=None):
+    """Carousel cover. s: headline, swipe (bool), credit."""
+    c = Canvas()
+    maxw = W - 2 * 44
+    bottom = H - 64
+    swipe_h = 54 if s.get("swipe", True) else 0
+    for size in (84, 78, 72, 66, 60, 56):
+        th, n = c.block_h(s["headline"], HEAD, HEAD, size, 1.02, maxw, upper=True)
+        if n <= 5 and th <= H - MIN_MEDIA - 140 - swipe_h:
+            break
+    text_top = bottom - swipe_h - th
+    if media is None:                                    # no picture: centre the block
+        text_top = (H - (46 + th + swipe_h)) // 2 + 46
+    line_y = text_top - 46
+    if media is not None:
+        mh = line_y - 30
+        pic = fade(cover_crop(media, W, mh, focus=0.3), bottom=150)
+        c.img.paste(pic, (0, 0))
+        if s.get("credit"):
+            c.credit(s["credit"], W - 28, 28 + 34)
+    c.brand_line(line_y)
+    c.draw(s["headline"], HEAD, HEAD, size, 1.02, 44, text_top, maxw, upper=True, center=True)
+    if swipe_h:
+        c.label("SWIPE FOR MORE", W / 2, text_top + th + 26, size=22, color=WHITE, anchor="ma",
+                spec=("InterTight.ttf", {"Weight": 700}, 0.06))
+    c.save(path)
 
 
 def render_still(s, path, media=None):
-    base = Image.new("RGB", (W, H), BG)
-    if media is not None and s["layout"] == "media_top":
-        place_media(base, media)
-    sl = Slide(transparent=True)
-    {"media_top": _media_top, "text": _text, "point": _point, "cta": _cta}[s["layout"]](sl, s)
-    base = base.convert("RGBA")
-    base.alpha_composite(sl.img)
-    base.convert("RGB").save(path, quality=90, optimize=True)
+    {"card": card, "headline": headline}[s["layout"]](s, path, media)

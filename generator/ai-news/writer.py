@@ -9,39 +9,38 @@ import json, os, re, urllib.request, urllib.error
 CATEGORIES = ["Models", "Funding", "Policy", "Research", "Chips", "Tools", "Robotics", "Business", "Safety", "Open Source"]
 
 SYSTEM = """You write posts for an Instagram page that brings people the latest AI news from around the world.
-Voice: clear, neutral, fast to read. Like a sharp news editor, not a hype account.
+Style: the slides say ONE thing in plain, punchy sentences; the caption carries the detail.
+Voice: clear and direct, a sharp news editor, not a hype account.
 Hard rules:
 - Use ONLY facts stated in the provided source text. Never add numbers, dates, names or claims that are not there.
 - If something is unconfirmed in the source (a report, a rumour), say "reportedly" or "according to <source>".
-- No emojis in on-image text. No clickbait, no "game-changer", no "revolutionary".
-- Wrap the 1-4 most important words of each headline in [square brackets]; they are shown in yellow.
-  Brackets must be balanced and never nested. Highlight names, numbers, or the key outcome.
+- No emojis on slide text. No clickbait, no "game-changer", no "revolutionary".
+- On slide text, wrap the 2-6 most important words in [square brackets]; they are shown in yellow.
+  Brackets must be balanced and never nested. Highlight the key outcome, name or number.
 - Write in your own words; do not copy sentences from the source.
 Reply with JSON only, no markdown fences."""
 
 SCHEMA = {
     "single": """{
   "kicker": one of %(cats)s,
-  "headline": "max 12 words, with [highlight]",
-  "body": "1-2 sentences, max 26 words: what happened and the key detail",
-  "caption_summary": "2-4 short sentences for the caption: what happened, why it matters",
+  "headline": "the slide text: 1-2 plain sentences, max 30 words, with [highlight]. Lead with who did what.",
+  "caption_summary": "4-6 short paragraphs separated by blank lines: the key facts, numbers, context, availability, what's next",
   "question": "one short question to invite comments, or empty string",
   "hashtags": ["3-5 specific hashtags for this story, e.g. #openai"]
 }""",
     "carousel": """{
   "kicker": one of %(cats)s,
-  "headline": "cover headline, max 12 words, with [highlight]",
-  "body": "cover line, max 20 words",
+  "headline": "cover headline, 10-18 words, shown in BIG CAPITALS, with [highlight]. e.g. 'Google just announced [Gemini 4 Argon], its most advanced AI model yet'",
   "points": [
-    {"heading": "What happened (max 7 words, may use [highlight])", "body": "max 34 words"},
-    {"heading": "Why it [matters] or similar, max 7 words", "body": "max 34 words"},
-    {"heading": "What to watch next, max 7 words", "body": "max 34 words; only if the source supports it"}
+    {"text": "one key fact, 1-2 sentences, max 28 words, with [highlight]"},
+    {"text": "the next key fact"},
+    {"text": "why it matters or what happens next"}
   ],
-  "caption_summary": "2-4 short sentences",
+  "caption_summary": "4-6 short paragraphs separated by blank lines: the key facts, numbers, context, availability, what's next",
   "question": "one short question, or empty string",
   "hashtags": ["3-5 specific hashtags"]
 }
-Give 2 or 3 points. Drop the third if the source doesn't support it.""",
+Give 2 to 4 points, each a separate fact. Only include what the source supports.""",
 }
 
 
@@ -75,20 +74,27 @@ def balanced(s):
     return depth == 0
 
 
-def _check(post, fmt, n):
+def _check(post, fmt, n=1):
     def fix(s):
         s = " ".join(str(s or "").split())
         return s if balanced(s) else s.replace("[", "").replace("]", "")
-    for k in ("headline", "body", "caption_summary", "question"):
+    for k in ("headline", "question"):
         if k in post:
             post[k] = fix(post[k])
+    # caption keeps its paragraphs
+    paras = [" ".join(p.split()) for p in re.split(r"\n\s*\n", str(post.get("caption_summary") or ""))]
+    post["caption_summary"] = "\n\n".join(p.replace("[", "").replace("]", "") for p in paras if p)
     if post.get("kicker") not in CATEGORIES:
         post["kicker"] = "Business"
     if fmt == "carousel":
-        pts = [p for p in post.get("points", []) if p.get("heading") and p.get("body")][:3]
+        pts = []
+        for p in post.get("points", []):
+            t = p.get("text") or " ".join(x for x in (p.get("heading"), p.get("body")) if x)
+            if t:
+                pts.append({"text": fix(t), "image": p.get("image") or ""})
         if len(pts) < 2:
             raise ValueError("carousel needs 2+ points")
-        post["points"] = [{"heading": fix(p["heading"]), "body": fix(p["body"])} for p in pts]
+        post["points"] = pts[:4]
     tags = [t if t.startswith("#") else "#" + t for t in post.get("hashtags", []) if t]
     post["hashtags"] = [re.sub(r"[^#\w]", "", t.lower()) for t in tags][:5]
     if not post.get("headline"):
@@ -177,7 +183,7 @@ def first_sentences(text, max_words=32):
 def write_rules(fmt, clusters):
     s = clusters[0]["stories"][0]
     return {"kicker": kicker_for(s["title"] + " " + s["summary"]), "headline": auto_highlight(s["title"]),
-            "body": first_sentences(s["summary"], 24), "caption_summary": first_sentences(s["summary"], 60),
+            "caption_summary": first_sentences(s["summary"], 60),
             "question": "", "hashtags": []}
 
 

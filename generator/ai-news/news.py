@@ -206,12 +206,12 @@ def rank(stories, seen, now, max_age_h=18):
 
 # ---------------------------------------------------------------- article page: image + text
 def article(url):
-    """Returns (og_image_url, text_excerpt). Best effort, never raises."""
+    """Returns (og_image_url, text_excerpt, inline_image_urls). Best effort, never raises."""
     try:
-        data, ctype, final = fetch(url, limit=1_500_000)
+        data, ctype, final = fetch(url, limit=2_000_000)
         page = data.decode("utf-8", errors="replace")
     except Exception:
-        return "", ""
+        return "", "", []
     img = ""
     for pat in (r'<meta[^>]+(?:property|name)=["\']og:image(?::secure_url)?["\'][^>]*content=["\']([^"\']+)',
                 r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']og:image["\']',
@@ -220,9 +220,31 @@ def article(url):
         if m:
             img = urllib.parse.urljoin(final, html.unescape(m.group(1)))
             break
-    paras = [strip_html(p) for p in re.findall(r"<p[^>]*>(.*?)</p>", page, re.S | re.I)]
+    body = page
+    m = re.search(r"<article[^>]*>(.*?)</article>", page, re.S | re.I)
+    if m:
+        body = m.group(1)
+    paras = [strip_html(p) for p in re.findall(r"<p[^>]*>(.*?)</p>", body, re.S | re.I)]
     paras = [p for p in paras if len(p) > 80 and "cookie" not in p.lower()]
-    return img, " ".join(paras)[:4000]
+    inline = []
+    for tag in re.findall(r"<img[^>]+>", body, re.I):
+        src = ""
+        ss = re.search(r'srcset=["\']([^"\']+)', tag)
+        if ss:                                   # largest candidate from srcset
+            cands = [c.strip().split(" ") for c in ss.group(1).split(",") if c.strip()]
+            cands = [(c[0], int(re.sub(r"\D", "", c[1]) or 0) if len(c) > 1 else 0) for c in cands]
+            src = max(cands, key=lambda c: c[1])[0] if cands else ""
+        if not src:
+            m2 = re.search(r'(?:data-src|src)=["\']([^"\']+)', tag)
+            src = m2.group(1) if m2 else ""
+        src = urllib.parse.urljoin(final, html.unescape(src))
+        low = src.lower()
+        if not src.startswith("http") or low.endswith((".svg", ".gif")) or re.search(
+                r"logo|avatar|icon|sprite|author|headshot|badge|emoji|pixel|1x1|gravatar", low):
+            continue
+        if src not in inline and src != img:
+            inline.append(src)
+    return img, " ".join(paras)[:4000], inline[:8]
 
 
 def load_image(url, min_w=600):

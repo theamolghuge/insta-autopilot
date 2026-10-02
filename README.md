@@ -35,7 +35,7 @@ Rules the poster follows:
 |---|---|
 | `IG_TOKEN_FIN_ANCE18` | Instagram access token for @fin.ance18 |
 | `IG_TOKEN_AI_NEWS_DAILY` | Instagram access token for the AI news page |
-| `ANTHROPIC_API_KEY` | optional: lets Claude write the AI news posts (without it, a rule-based writer uses the source headline) |
+| `ANTHROPIC_API_KEY` | optional: only used by the AI news safety net; normal posts are written by the Claude scheduled task |
 | `SECRETS_PAT` | GitHub fine-grained token with **Secrets: read and write** on this repo, so tokens can renew themselves every Monday |
 
 ## Manual controls (Actions tab)
@@ -58,15 +58,15 @@ Set `"enabled": false` to pause an account.
 
 ## AI news page (fully automatic)
 
-`.github/workflows/ai-news.yml` runs every 3 hours on GitHub, no computer needed:
+No computer needed. Every 3 hours:
 
-1. reads ~16 AI news feeds, groups the same story from different outlets, ranks by size and freshness,
-   skips anything already covered (`content/ai.news.daily/seen.json`);
-2. writes the post (Claude via `ANTHROPIC_API_KEY`, otherwise rule-based);
-3. renders it in the brand (black, white, yellow; article image on the top 40%) and adds it to
-   `content/ai.news.daily/queue/`;
-4. commits it and publishes it immediately. If that publish fails, the next run retries it (posts older than 6 h are dropped instead).
+1. A **Claude scheduled task** (set up in Claude, instructions in `generator/ai-news/CLAUDE_TASK.md`) researches
+   the latest AI news, picks the biggest story not covered yet (`content/ai.news.daily/seen.json`), writes the
+   post and pushes a brief to `content/ai.news.daily/briefs/`.
+2. That push starts `.github/workflows/ai-news.yml`: it downloads the article's pictures, renders the slides in
+   the brand (`brand/ai.news.daily/BRAND.md`), commits them to the queue and publishes right away.
+3. Safety net: 45 minutes after each Claude run the workflow checks that something was posted in the last 2.5 h.
+   If not, it collects the news itself and posts a simpler version (Claude-written if `ANTHROPIC_API_KEY` is set).
 
 Turn it on: add the `IG_TOKEN_AI_NEWS_DAILY` secret, then set `"enabled": true` for `ai.news.daily` in `accounts.json`.
 Try it first: Actions > **AI news** > Run workflow > `preview` (images are attached to the run; nothing is posted).
-Brand rules: `brand/ai.news.daily/BRAND.md`. Settings (handle, hashtags, format rotation): `generator/ai-news/config.json`.

@@ -16,15 +16,15 @@
   "max_story_age_hours": 18,
   "drop_unposted_after_hours": 6,
   "format_mix": [
-    "media_top",
+    "single",
     "carousel",
-    "media_top",
-    "text",
-    "media_top",
+    "single",
+    "single",
     "carousel",
-    "media_top",
-    "text"
+    "single",
+    "single",
+    "carousel"
   ],
   "llm_model": "claude-sonnet-5-5",
-  "theme": "minimal"
+  "display_name": "AI News"
 }
