@@ -1,0 +1,35 @@
+{
+  "created_at": "2026-10-02T16:29:10Z",
+  "format": "single",
+  "story": {
+    "title": "Amazon pledges $1B to data center communities, warns that local opposition threatens U.S. AI lead",
+    "url": "https://www.geekwire.com/2026/amazon-pledges-1b-to-data-center-communities-warns-that-local-opposition-threatens-u-s-ai-lead/",
+    "source": "GeekWire",
+    "published": "2026-10-02T09:05:09Z",
+    "image": "https://cdn.geekwire.com/wp-content/uploads/2026/10/Garman-Keynote-10-1260x840.jpg"
+  },
+  "also": [
+    {
+      "source": "Amazon",
+      "url": "https://www.aboutamazon.com/news/company-news/amazon-data-centers-built-together",
+      "title": "The race our nation can't afford to lose, plus a new commitment from us and a fresh set of community investments"
+    },
+    {
+      "source": "Newsweek",
+      "url": "https://www.newsweek.com/amazon-pledges-1-billion-for-data-center-communities-as-us-backlash-grows-12515431",
+      "title": "Amazon pledges $1 billion for data center communities as US backlash grows"
+    }
+  ],
+  "post": {
+    "kicker": "Business",
+    "headline": "Amazon is pledging [more than $1 billion] over five years to the US towns that host its data centers, as [local backlash] slows the AI buildout.",
+    "caption_summary": "Amazon announced \"Built Together\", a program that adds more than $1 billion over five years for US communities where it runs data centers, on top of the $1 billion-plus it says it gave them over the past three years.\n\nThe money targets free community college for an estimated 300,000 students, 16 new skilled-trades training centers, and energy upgrades for 300+ schools and community buildings and 30,000+ homes. Communities also get flexible yearly funding for local priorities like roads, parks and fire equipment.\n\nAmazon also says it will stop using NDAs with government agencies on new projects, use cleaner Tier 4 backup generators at new sites, publish its energy and water use every year, and pay enough for power to keep local bills from rising.\n\nAWS CEO Matt Garman wrote that more than 100 data center moratoriums are being considered across the US, and warned that enacting them could cost the country its lead in AI.\n\nFor scale: Amazon expects about $220 billion in capital spending this year, so the new pledge is roughly a tenth of 1% of that, GeekWire notes. Unlike Microsoft, Amazon did not commit to giving up local tax breaks.",
+    "question": "Would you want an AI data center in your town?",
+    "hashtags": [
+      "#amazon",
+      "#aws",
+      "#datacenters",
+      "#aiinfrastructure"
+    ]
+  }
+}
