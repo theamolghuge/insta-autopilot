@@ -60,6 +60,7 @@ def main(mode):
         except Exception as e:
             ok = False
             print(f"[{acc['id']}] ERROR: {e}")
+            print(f"[{acc['id']}] key starts with {token[:4]!r}, length {len(token)}")
             summary(f"| {acc['id']} | ERROR, see log |")
     sys.exit(0 if ok else 1)
 

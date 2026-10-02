@@ -49,7 +49,8 @@ def save_json(path, data):
 
 def get_token(name):
     secrets = json.loads(os.environ.get("ALL_SECRETS") or "{}")
-    return secrets.get(name) or os.environ.get(name)
+    token = secrets.get(name) or os.environ.get(name) or ""
+    return token.strip().strip('"').strip("'")
 
 
 class Api:
