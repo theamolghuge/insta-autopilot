@@ -33,7 +33,22 @@ Never pick a story that is already there, even if a different outlet reported it
 - `carousel`: cover (big picture + huge ALL-CAPS headline + "SWIPE FOR MORE"), then 2-4 post cards,
   each with ONE fact and, ideally, its own picture from the article (chart, screenshot, product shot).
   For big stories with several confirmed facts. About 3 a day; never two carousels in a row.
+- `video`: a Reel. Same post card, but a video plays where the picture would be. About 2 a day.
+  Pick it when the company published a demo / launch video on its OWN site (see below), or when the
+  story is visual enough that a slow zoom over the article picture works. GitHub uses, in order:
+  the official clip -> a slow zoom over the article picture -> a still post card.
 - No picture available? GitHub makes a text-only card automatically. Never use a placeholder image.
+
+### Official clips only
+- Only use a video file hosted on the announcing company's own website: its blog / newsroom /
+  announcement page (e.g. openai.com, blog.google, deepmind.google, anthropic.com, nvidia.com,
+  ai.meta.com, apple.com, x.ai, mistral.ai; full list in `official_video_domains` in
+  `generator/ai-news/config.json`). Look in the page for a direct `.mp4`/`.webm` link
+  (`<video>`, `<source>`, `og:video`; the Firecrawl scrape with `rawHtml` shows them).
+- NEVER YouTube, X/Twitter, TikTok, Instagram, Facebook, Vimeo, TV/news broadcasters, or creators'
+  videos, even if the company reposted them. If the only video is on one of those, use `video` without
+  a clip (slow zoom over the picture) or a `single`.
+- Pick the best 10-30 seconds (the actual demo, not a logo intro) and give `start` and `length`.
 
 ## 5. Write it
 Style: the slides say one thing in plain, punchy sentences; the caption carries the detail.
@@ -47,7 +62,7 @@ Voice: clear and direct, a sharp news editor, not a hype account.
 
 | Field | What / limit |
 |---|---|
-| `headline` | single: the card text, 1-2 sentences, max 30 words, lead with who did what. carousel: cover headline, 10-18 words (shown in big capitals) |
+| `headline` | single / video: the card text, 1-2 sentences, max 26 words for video and 30 for single, lead with who did what. carousel: cover headline, 10-18 words (shown in big capitals) |
 | `points` | carousel only: 2-4 items `{"text": max 28 words, "image": URL of a picture from the article for this fact, or ""}` |
 | `caption_summary` | 4-6 short paragraphs separated by a blank line: key facts, numbers, context, availability, what's next |
 | `question` | one short question that invites comments (default "What do you think?") |
@@ -66,7 +81,9 @@ File: `content/ai.news.daily/briefs/<UTC time as YYYYMMDD-HHMM>.json`
     "url": "https://... (the article you read)",
     "source": "Google DeepMind",
     "published": "2026-10-02T07:40:00Z",
-    "image": "https://... the article's main picture (og:image) if you saw one, else empty"
+    "image": "https://... the article's main picture (og:image) if you saw one, else empty",
+    "video": {"url": "https://...demo.mp4", "page": "https://openai.com/index/... (official page it's on)",
+              "source": "OpenAI", "start": 4, "length": 20}
   },
   "also": [{"source": "TechCrunch", "url": "https://...", "title": "their headline"}],
   "post": {
@@ -82,7 +99,8 @@ File: `content/ai.news.daily/briefs/<UTC time as YYYYMMDD-HHMM>.json`
   }
 }
 ```
-Omit `points` for singles. `source` names appear on the slides, so use the outlet's proper name.
+Omit `points` for singles and videos. Omit `video` unless the format is `video` and you found an
+official clip (a `video` brief without it becomes a slow zoom over the article picture). `source` names appear on the slides, so use the outlet's proper name.
 Picture URLs must be direct image links from the article page you read (not from other sites).
 
 ## 7. Check, then push

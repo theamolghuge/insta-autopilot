@@ -10,6 +10,9 @@ Every post covers ONE story. Slides are 1080 x 1350 (4:5). Two templates:
             Used for single posts and for the inside slides of a carousel.
   headline  carousel cover: picture on top, brand line, big centred ALL-CAPS headline, "SWIPE FOR MORE".
 
+Either template can hold a video instead of a picture (see video.py): same layout, the clip plays
+where the picture would be.
+
 Typography: Inter Tight (headlines + card text), Geist (handle), Geist Mono (small labels). All OFL.
 """
 from pathlib import Path
@@ -96,6 +99,8 @@ class Canvas:
     def __init__(self):
         self.img = Image.new("RGB", (W, H), BG)
         self.d = ImageDraw.Draw(self.img)
+        self.alpha = None            # set by hole(): this slide is an overlay for a video
+        self._credit = None
 
     def word(self, x, y, s, f, trk, fill):
         if abs(trk) < 0.01:
@@ -176,16 +181,45 @@ class Canvas:
         self.d.line([(x0 + tw + 22, y), (W - PAD, y)], fill=RULE, width=2)
 
     def credit(self, text, x1, y1):
+        self._credit = (text, x1, y1)            # drawn last, on top of picture or video
+
+    def _draw_credit(self, img):
+        text, x1, y1 = self._credit
         f, trk = font(LABEL, 16)
         text = text.upper()[:40]
         tw = wlen(f, trk, text)
-        box = Image.new("RGBA", (int(tw + 28), 34), (0, 0, 0, 0))
-        ImageDraw.Draw(box).rounded_rectangle([0, 0, tw + 27, 33], 17, fill=(0, 0, 0, 165))
-        self.img.paste(box, (int(x1 - tw - 28), int(y1 - 34)), box)
-        self.word(x1 - tw - 14, y1 - 27, text, f, trk, (210, 210, 210))
+        layer = Image.new("RGBA", (W, H), (0, 0, 0, 0))
+        ld = ImageDraw.Draw(layer)
+        ld.rounded_rectangle([x1 - tw - 28, y1 - 34, x1 - 1, y1 - 1], 17, fill=(0, 0, 0, 165))
+        tmp = Canvas.__new__(Canvas); tmp.d = ld
+        Canvas.word(tmp, x1 - tw - 14, y1 - 27, text, f, trk, (210, 210, 210, 255))
+        return Image.alpha_composite(img.convert("RGBA"), layer)
+
+    def hole(self, y0, y1, fade_top=0, fade_bottom=0):
+        """Make rows y0..y1 transparent (a video plays there), fading to black at the edges."""
+        if self.alpha is None:
+            self.alpha = Image.new("L", (W, H), 255)
+        h = y1 - y0
+        col = Image.new("L", (1, h), 0)
+        for yy in range(h):
+            a = 0
+            if fade_top and yy < fade_top:
+                t = 1 - yy / fade_top; a = max(a, int(255 * t * t * (3 - 2 * t)))
+            if fade_bottom and yy > h - fade_bottom:
+                t = 1 - (h - yy) / fade_bottom; a = max(a, int(255 * t * t * (3 - 2 * t)))
+            col.putpixel((0, yy), a)
+        self.alpha.paste(col.resize((W, h)), (0, y0))
 
     def save(self, path):
-        self.img.save(path, quality=90, optimize=True)
+        img = self.img
+        if self.alpha is not None:                # overlay PNG for the video renderer
+            img = img.convert("RGBA"); img.putalpha(self.alpha)
+        if self._credit:
+            img = self._draw_credit(img)
+        if self.alpha is not None:
+            img.save(str(path).rsplit(".", 1)[0] + ".png")
+        else:
+            img.convert("RGB").save(path, quality=90, optimize=True)
 
 
 # ------------------------------------------------------------------ media helpers
@@ -212,6 +246,9 @@ def fade(img, top=0, bottom=0):
 
 
 # ------------------------------------------------------------------ templates
+VIDEO = "video"     # pass as `media` to get a transparent overlay PNG + the video box, for video.py
+
+
 def card(s, path, media=None):
     """Post card. s: text, credit, source (shown when there's no picture), page."""
     c = Canvas()
@@ -225,8 +262,11 @@ def card(s, path, media=None):
             if y + th + 44 <= H - MIN_MEDIA and n <= 6:
                 break
         y = c.draw(text, CARD, CARD_HL, size, 1.27, PAD, y, maxw) + 44
-        pic = fade(cover_crop(media, W, H - y), top=18)
-        c.img.paste(pic, (0, y))
+        box = (0, y, W, H)
+        if media is VIDEO:
+            c.hole(y, H, fade_top=18)
+        else:
+            c.img.paste(fade(cover_crop(media, W, H - y), top=18), (0, y))
         if s.get("credit"):
             c.credit(s["credit"], W - 28, H - 28)
     else:
@@ -247,6 +287,7 @@ def card(s, path, media=None):
     if s.get("page"):
         c.label(s["page"], W - PAD, PAD + 30, size=20, anchor="ra")
     c.save(path)
+    return box
 
 
 def headline(s, path, media=None):
@@ -263,10 +304,14 @@ def headline(s, path, media=None):
     if media is None:                                    # no picture: centre the block
         text_top = (H - (46 + th + swipe_h)) // 2 + 46
     line_y = text_top - 46
+    box = None
     if media is not None:
         mh = line_y - 30
-        pic = fade(cover_crop(media, W, mh, focus=0.3), bottom=150)
-        c.img.paste(pic, (0, 0))
+        box = (0, 0, W, mh)
+        if media is VIDEO:
+            c.hole(0, mh, fade_bottom=150)
+        else:
+            c.img.paste(fade(cover_crop(media, W, mh, focus=0.3), bottom=150), (0, 0))
         if s.get("credit"):
             c.credit(s["credit"], W - 28, 28 + 34)
     c.brand_line(line_y)
@@ -275,7 +320,10 @@ def headline(s, path, media=None):
         c.label("SWIPE FOR MORE", W / 2, text_top + th + 26, size=22, color=WHITE, anchor="ma",
                 spec=("InterTight.ttf", {"Weight": 700}, 0.06))
     c.save(path)
+    return box
 
 
 def render_still(s, path, media=None):
-    {"card": card, "headline": headline}[s["layout"]](s, path, media)
+    """Render a slide. With media=VIDEO, writes <path>.png as a transparent overlay and returns the
+    (x0, y0, x1, y1) box the video should fill."""
+    return {"card": card, "headline": headline}[s["layout"]](s, path, media)

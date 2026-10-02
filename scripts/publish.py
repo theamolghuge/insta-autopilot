@@ -7,6 +7,7 @@ the next item in that account's queue is published.
 
 Queue layout:  content/<account id>/queue/<NNNN-slug>/
                   01.jpg [02.jpg ...]   -> 1 image = single post, 2-10 = carousel
+                  01.mp4                -> Reel; .mp4 files may also be carousel items
                   caption.txt
 State:         state/<account id>.json  (what has been posted, written by this script)
 
@@ -20,6 +21,8 @@ ROOT = Path(__file__).resolve().parent.parent
 GRACE_MINUTES = 120          # a slot is skipped if we notice it later than this
 MAX_ATTEMPTS = 3             # after this many failures an item is marked failed and skipped
 API_BASE = os.environ.get("IG_API_BASE", "https://graph.instagram.com")
+VIDEO_WAIT = 600             # Instagram needs a few minutes to process a video
+MEDIA_EXT = (".jpg", ".jpeg", ".mp4")
 ERRORS = []
 
 
@@ -89,24 +92,38 @@ class Api:
         raise RuntimeError(f"container {container_id} not ready after {timeout}s")
 
     def publish(self, user_id, image_urls, caption):
-        if len(image_urls) == 1:
+        has_video = any(is_video(u) for u in image_urls)
+        wait = VIDEO_WAIT if has_video else 120
+        if len(image_urls) == 1 and is_video(image_urls[0]):
+            # single video -> Reel (also shown in the feed)
+            c = self._call("POST", f"{user_id}/media", {"media_type": "REELS", "video_url": image_urls[0],
+                                                        "caption": caption, "share_to_feed": "true"})["id"]
+        elif len(image_urls) == 1:
             c = self._call("POST", f"{user_id}/media", {"image_url": image_urls[0], "caption": caption})["id"]
         else:
             children = []
             for u in image_urls:
-                cid = self._call("POST", f"{user_id}/media", {"image_url": u, "is_carousel_item": "true"})["id"]
+                if is_video(u):
+                    params = {"media_type": "VIDEO", "video_url": u, "is_carousel_item": "true"}
+                else:
+                    params = {"image_url": u, "is_carousel_item": "true"}
+                cid = self._call("POST", f"{user_id}/media", params)["id"]
                 children.append(cid)
             for cid in children:
-                self.wait_ready(cid)
+                self.wait_ready(cid, timeout=wait)
             c = self._call("POST", f"{user_id}/media",
                            {"media_type": "CAROUSEL", "children": ",".join(children), "caption": caption})["id"]
-        self.wait_ready(c)
+        self.wait_ready(c, timeout=wait)
         media_id = self._call("POST", f"{user_id}/media_publish", {"creation_id": c})["id"]
         try:
             link = self._call("GET", media_id, {"fields": "permalink"}).get("permalink")
         except Exception:
             link = None
         return media_id, link
+
+
+def is_video(url_or_path):
+    return str(url_or_path).lower().split("?")[0].endswith(".mp4")
 
 
 # ---------------------------------------------------------------- queue / slots
@@ -118,14 +135,14 @@ def queue_items(acc_id):
 
 
 def validate_item(item):
-    imgs = sorted(p for p in item.iterdir() if p.suffix.lower() in (".jpg", ".jpeg"))
+    imgs = sorted(p for p in item.iterdir() if p.suffix.lower() in MEDIA_EXT)
     cap_file = item / "caption.txt"
     caption = cap_file.read_text().strip() if cap_file.exists() else ""
     problems = []
     if not imgs:
-        problems.append("no .jpg images")
+        problems.append("no .jpg images or .mp4 video")
     if len(imgs) > 10:
-        problems.append(f"{len(imgs)} images (max 10)")
+        problems.append(f"{len(imgs)} images/videos (max 10)")
     if len(caption) > 2200:
         problems.append("caption longer than 2200 characters")
     if caption.count("#") > 30:
@@ -146,6 +163,16 @@ def latest_slot(now_utc, tz, slots):
 
 
 def media_url(path):
+    if is_video(path):
+        # raw.githubusercontent.com serves .mp4 as application/octet-stream, which Instagram may refuse.
+        # Videos are served from VIDEO_BASE_URL (set by ai-news.yml) or jsDelivr, both send video/mp4.
+        rel = path.relative_to(ROOT).as_posix()
+        vbase = os.environ.get("VIDEO_BASE_URL")
+        if vbase:
+            return vbase.rstrip("/") + "/" + urllib.parse.quote(rel)
+        repo = os.environ["GITHUB_REPOSITORY"]
+        ref = os.environ.get("GITHUB_SHA", "main")
+        return f"https://cdn.jsdelivr.net/gh/{repo}@{ref}/{urllib.parse.quote(rel)}"
     base = os.environ.get("MEDIA_BASE_URL")
     rel = path.relative_to(ROOT).as_posix()
     if base:
@@ -189,8 +216,8 @@ def run_account(cfg, acc, now, dry_run, force):
         save_json(state_path, state)
         return True
     urls = [media_url(p) for p in imgs]
-    kind = "carousel" if len(urls) > 1 else "single"
-    log(f"[{acc_id}] posting {item.name} ({kind}, {len(urls)} image(s)) for slot {slot}")
+    kind = "carousel" if len(urls) > 1 else ("reel" if is_video(urls[0]) else "single")
+    log(f"[{acc_id}] posting {item.name} ({kind}, {len(urls)} file(s)) for slot {slot}")
     if dry_run:
         for u in urls:
             log("    " + u)

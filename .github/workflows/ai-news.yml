@@ -22,7 +22,7 @@ on:
       format:
         description: "Force a format (leave empty to follow the rotation)"
         type: choice
-        options: ["", single, carousel, text]
+        options: ["", single, carousel, video, text]
         default: ""
 
 permissions:
@@ -44,6 +44,9 @@ jobs:
           python-version: "3.12"
 
       - run: pip install -q -r requirements.txt
+
+      - name: ffmpeg (for Reels)
+        run: command -v ffmpeg >/dev/null || (sudo apt-get update -q && sudo apt-get install -y -q ffmpeg)
 
       - name: Is the account switched on?
         id: acc
@@ -86,6 +89,29 @@ jobs:
           EXTRA=""
           if [ "${{ github.event_name }}" = "schedule" ]; then EXTRA="--fallback"; fi
           python generator/ai-news/make_post.py $EXTRA ${F:+--format $F}
+
+      # Videos never go on main (they'd bloat the repo). The newest ones are committed alone to the
+      # `media` branch, which is replaced each time, and served by jsDelivr with the right video type.
+      - name: Host videos
+        if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview'
+        run: |
+          mapfile -t V < <(find "content/${{ steps.acc.outputs.id }}/queue" -name '*.mp4' 2>/dev/null)
+          if [ ${#V[@]} -eq 0 ]; then echo "no videos"; exit 0; fi
+          git config user.name "autopilot-bot"
+          git config user.email "autopilot-bot@users.noreply.github.com"
+          export GIT_INDEX_FILE="$RUNNER_TEMP/media-index"
+          git update-index --add -- "${V[@]}"
+          C=$(git commit-tree "$(git write-tree)" -m "AI news videos [skip ci]")
+          unset GIT_INDEX_FILE
+          git push -q -f origin "$C:refs/heads/media"
+          BASE="https://cdn.jsdelivr.net/gh/${{ github.repository }}@$C"
+          echo "VIDEO_BASE_URL=$BASE" >> "$GITHUB_ENV"
+          for v in "${V[@]}"; do            # warm the CDN and make sure it serves video/mp4
+            for i in 1 2 3 4 5 6; do
+              T=$(curl -sIL "$BASE/$v" | grep -i '^content-type' | tail -1)
+              echo "$v -> $T"; echo "$T" | grep -qi 'video/mp4' && break; sleep 10
+            done
+          done
 
       - name: Commit the post
         id: commit

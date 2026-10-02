@@ -68,5 +68,9 @@ No computer needed. Every 3 hours:
 3. Safety net: 45 minutes after each Claude run the workflow checks that something was posted in the last 2.5 h.
    If not, it collects the news itself and posts a simpler version (Claude-written if `ANTHROPIC_API_KEY` is set).
 
+Formats: single post card, carousel, and Reels (`video`): an official company clip inside the post card,
+or a slow zoom over the article picture. Videos are not stored on `main`: each run commits them alone to the
+`media` branch (replaced every time) and Instagram fetches them through jsDelivr.
+
 Turn it on: add the `IG_TOKEN_AI_NEWS_DAILY` secret, then set `"enabled": true` for `ai.news.daily` in `accounts.json`.
 Try it first: Actions > **AI news** > Run workflow > `preview` (images are attached to the run; nothing is posted).

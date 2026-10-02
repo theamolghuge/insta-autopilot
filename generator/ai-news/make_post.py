@@ -24,6 +24,7 @@ sys.path.insert(0, str(HERE))
 
 import news, writer                                   # noqa: E402
 from brand import render_still, plain               # noqa: E402
+import video                                          # noqa: E402
 
 CFG = json.loads((HERE / "config.json").read_text())
 ACC = CFG["account_id"]
@@ -62,6 +63,12 @@ def tidy_queue(now, dry, drop_all=False):
         meta = load(item / "meta.json", {})
         made = meta.get("generated_at")
         age = (now - dt.datetime.fromisoformat(made)).total_seconds() / 3600 if made else 999
+        has_media = any(p.suffix.lower() in (".jpg", ".jpeg", ".mp4") for p in item.iterdir())
+        if not has_media:                      # e.g. a video post whose file lived only on a past runner
+            log(f"dropping {item.name}: its media isn't here any more")
+            if not dry:
+                shutil.rmtree(item)
+            continue
         if drop_all or age > CFG["drop_unposted_after_hours"]:
             log(f"dropping stale unposted item {item.name} ({age:.1f} h old)")
             if not dry:
@@ -91,7 +98,7 @@ def _find_image(cl):
         if im is not None:
             return im
     for x in cl["stories"][1:3]:                       # another outlet covering the same story
-        img, _, _ = news.article(x["url"])
+        img, _, _, _ = news.article(x["url"])
         im = news.load_image(img) or news.load_image(x.get("feed_image"))
         if im is not None:
             cl["image_source"] = x["source"]
@@ -103,9 +110,20 @@ def enrich(cl, offline=False):
     if offline:
         cl.setdefault("text", cl["stories"][0].get("summary", ""))
         cl.setdefault("inline", [])
+        cl.setdefault("videos", [])
         return cl
-    img, text, inline = news.article(cl["stories"][0]["url"])
+    img, text, inline, videos = news.article(cl["stories"][0]["url"])
     cl["og_image"], cl["text"], cl["inline"] = img, text, inline
+    # official clips: only from pages on the announcing company's own site
+    domains = CFG.get("official_video_domains", [])
+    cl.setdefault("videos", [])
+    for x in cl["stories"]:
+        page_videos = videos if x is cl["stories"][0] else None
+        if not news.is_official(x["url"], domains):
+            continue
+        if page_videos is None:
+            page_videos = news.article(x["url"])[3]
+        cl["videos"] += [{"url": v, "page": x["url"], "source": x["source"]} for v in page_videos]
     return cl
 
 
@@ -148,6 +166,12 @@ def render(fmt, post, clusters, out, now, offline):
         render_still(slide, p, media)
         files.append(p)
 
+    if fmt == "video":
+        made = make_reel(post, cl, out, offline, main_image)
+        if made:
+            files.append(made)
+            return files
+        fmt = "single"                                 # no clip and no picture: plain post card
     if is_single(fmt):
         im, who = main_image() if fmt != "text" else (None, None)
         save({"layout": "card", "text": post["headline"], "source": src,
@@ -163,6 +187,41 @@ def render(fmt, post, clusters, out, now, offline):
             save({"layout": "card", "text": p["text"], "page": f"{i}/{n}", "source": src,
                   "credit": f"Image: {src}" if pim is not None else None}, pim)
     return files
+
+
+def make_reel(post, cl, out, offline, main_image):
+    """01.mp4: an official clip inside the post card, else a slow zoom over the article picture.
+    Returns the path, or None if neither is possible (then the caller makes a still)."""
+    if not video.has_ffmpeg():
+        log("ffmpeg missing: making a still instead of a video")
+        return None
+    src = cl["sources"][0]
+    target = out / "01.mp4"
+    slide = {"layout": "card", "text": post["headline"]}
+    clips = list(cl.get("videos", []))
+    if offline and os.environ.get("AI_NEWS_TEST_VIDEO"):
+        clips = [{"url": "file://" + os.environ["AI_NEWS_TEST_VIDEO"], "source": src, "page": ""}]
+    for c in clips:
+        tmp = out / "_clip"
+        got = (Path(c["url"][7:]) if c["url"].startswith("file://") else news.download(c["url"], tmp))
+        if not got:
+            continue
+        try:
+            video.clip_reel(dict(slide, credit=f"Video: {c.get('source') or src}"), got, target,
+                            start=c.get("start", 0), max_len=min(30, float(c.get("length") or 30)))
+            log(f"reel from official clip {c['url'][:90]}")
+            return target
+        except Exception as e:
+            log(f"clip unusable ({str(e)[:80]}); trying the next option")
+        finally:
+            if tmp.exists():
+                tmp.unlink()
+    im, who = main_image()
+    if im is not None:
+        video.motion_reel(dict(slide, credit=f"Image: {who}"), im, target)
+        log("reel from the article picture (no usable official clip)")
+        return target
+    return None
 
 
 def caption(fmt, post, clusters):
@@ -206,7 +265,7 @@ def from_brief(path, now, seen):
         log(f"brief {Path(path).name}: this story was already covered; ignoring it")
         return None
     fmt = {"media_top": "single"}.get(b.get("format"), b.get("format", "single"))
-    if fmt not in ("single", "text", "carousel"):
+    if fmt not in ("single", "text", "carousel", "video"):
         fmt = "single"
     post = writer._check(dict(b["post"]), fmt, 1)
     post["writer"] = "claude-task"
@@ -214,7 +273,18 @@ def from_brief(path, now, seen):
     for x in stories:
         if x["source"] not in srcs:
             srcs.append(x["source"])
-    return fmt, post, [{"stories": stories, "sources": srcs, "score": None, "brief_image": st.get("image")}]
+    cl = {"stories": stories, "sources": srcs, "score": None, "brief_image": st.get("image"), "videos": []}
+    v = st.get("video") or {}
+    if isinstance(v, str):
+        v = {"url": v}
+    if v.get("url"):
+        page = v.get("page") or st["url"]
+        if news.is_official(page, CFG.get("official_video_domains", [])):
+            cl["videos"].append({"url": v["url"], "page": page, "source": v.get("source") or st["source"],
+                                 "start": v.get("start", 0), "length": v.get("length", 30)})
+        else:
+            log(f"brief video ignored: {page} is not an official company page")
+    return fmt, post, [cl]
 
 
 def last_post_age_h(now):
@@ -231,7 +301,7 @@ def main():
     ap.add_argument("--fallback", action="store_true",
                     help="safety net: only make a post if nothing was posted in the last 2.5 h and no brief is waiting")
     ap.add_argument("--out", help="write the post here instead of the queue (testing; nothing is recorded)")
-    ap.add_argument("--format", choices=["single", "text", "carousel"], help="force a format")
+    ap.add_argument("--format", choices=["single", "text", "carousel", "video"], help="force a format")
     ap.add_argument("--now", help="pretend time (ISO)")
     ap.add_argument("--no-fetch", action="store_true", help="don't download article pages/images (sandbox checks)")
     ap.add_argument("--always", action="store_true", help="make a post even if a fresh one is already waiting")

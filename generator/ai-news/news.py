@@ -206,12 +206,13 @@ def rank(stories, seen, now, max_age_h=18):
 
 # ---------------------------------------------------------------- article page: image + text
 def article(url):
-    """Returns (og_image_url, text_excerpt, inline_image_urls). Best effort, never raises."""
+    """Returns (og_image_url, text_excerpt, inline_image_urls, video_urls). Best effort, never raises.
+    video_urls are direct video files found on the page (og:video, <video>, <source>)."""
     try:
         data, ctype, final = fetch(url, limit=2_000_000)
         page = data.decode("utf-8", errors="replace")
     except Exception:
-        return "", "", []
+        return "", "", [], []
     img = ""
     for pat in (r'<meta[^>]+(?:property|name)=["\']og:image(?::secure_url)?["\'][^>]*content=["\']([^"\']+)',
                 r'<meta[^>]+content=["\']([^"\']+)["\'][^>]*(?:property|name)=["\']og:image["\']',
@@ -244,7 +245,16 @@ def article(url):
             continue
         if src not in inline and src != img:
             inline.append(src)
-    return img, " ".join(paras)[:4000], inline[:8]
+    videos = []
+    for pat in (r'<meta[^>]+property=["\']og:video(?::secure_url|:url)?["\'][^>]*content=["\']([^"\']+)',
+                r'<video[^>]+src=["\']([^"\']+)',
+                r'<source[^>]+src=["\']([^"\']+)["\'][^>]*type=["\']video/(?:mp4|webm|quicktime)',
+                r'<source[^>]+type=["\']video/(?:mp4|webm|quicktime)["\'][^>]*src=["\']([^"\']+)'):
+        for m in re.finditer(pat, page, re.I):
+            v = urllib.parse.urljoin(final, html.unescape(m.group(1)))
+            if re.search(r"\.(mp4|webm|mov)(\?|$)", v.lower()) and v not in videos:
+                videos.append(v)
+    return img, " ".join(paras)[:4000], inline[:8], videos[:4]
 
 
 def load_image(url, min_w=600):
@@ -270,3 +280,39 @@ def load_image(url, min_w=600):
     if colors and max(c for c, _ in colors) > 0.7 * 1024:
         return None
     return im
+
+
+# ---------------------------------------------------------------- official videos
+def host(url):
+    return urllib.parse.urlsplit(url).netloc.lower().split(":")[0]
+
+
+def is_official(page_url, domains):
+    """True if the page is on the announcing company's own site (config: official_video_domains)."""
+    h = host(page_url)
+    return any(h == d or h.endswith("." + d) for d in domains)
+
+
+BLOCKED_VIDEO_HOSTS = ("youtube.com", "youtu.be", "x.com", "twitter.com", "tiktok.com", "instagram.com",
+                       "facebook.com", "fbcdn.net", "vimeo.com")
+
+
+def download(url, path, max_mb=150):
+    """Stream a video file to disk. Returns path or None. Never fetches from social/video platforms."""
+    if any(host(url) == b or host(url).endswith("." + b) for b in BLOCKED_VIDEO_HOSTS):
+        return None
+    try:
+        req = urllib.request.Request(url, headers={"User-Agent": UA})
+        with urllib.request.urlopen(req, timeout=60) as r, open(path, "wb") as f:
+            total = 0
+            while True:
+                chunk = r.read(1 << 20)
+                if not chunk:
+                    break
+                total += len(chunk)
+                if total > max_mb * 1024 * 1024:
+                    raise ValueError("too big")
+                f.write(chunk)
+        return path
+    except Exception:
+        return None

@@ -47,6 +47,7 @@ All fonts are OFL and bundled in `generator/ai-news/fonts/`.
 |---|---|
 | `single` | one post card |
 | `carousel` | headline cover + 2-4 post cards, one fact each, each with its own article picture when there is one |
+| `video` | Reel (1080 x 1350, up to 30 s): post card with a video where the picture would be. Uses the company's OWN official clip when there is one (never YouTube/X/TikTok/broadcasters), else a slow zoom over the article picture. Credit `VIDEO: <SOURCE>` |
 
 The caption carries the detail: headline, 4-6 short paragraphs, a question, `Source:` line, follow line, hashtags.
 Never a placeholder or generated picture: no real image means a text-only card.

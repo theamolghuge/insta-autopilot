@@ -41,7 +41,8 @@ Each folder needs `01.jpg` (and `02.jpg`... for carousels) plus `caption.txt`.
 - **Preview without posting:** Actions > AI news > Run workflow > mode `preview`. Download the images from the run.
 - **Post one right now:** Actions > AI news > Run workflow > mode `normal` (uses a waiting brief, else makes one itself).
 - **Change the mix of formats:** edit `format_mix` in `generator/ai-news/config.json`
-  (`single`, `carousel`, `text`). Every post covers one story.
+  (`single`, `carousel`, `video`, `text`). Every post covers one story.
+- **Allow videos from another company's site:** add its domain to `official_video_domains` in `generator/ai-news/config.json`.
 - **Change how Claude picks or writes stories:** edit `generator/ai-news/CLAUDE_TASK.md` (the scheduled task reads it every run).
 - **Change how often:** change the schedule of the Claude scheduled task, and the `cron` safety-net line in
   `.github/workflows/ai-news.yml` to ~45 min after it. The account has no `slots`.
