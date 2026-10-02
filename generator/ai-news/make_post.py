@@ -22,7 +22,6 @@ sys.path.insert(0, str(HERE))
 
 import news, writer                                   # noqa: E402
 from brand import render_still, plain, W, MEDIA_H     # noqa: E402
-from art import make_art                              # noqa: E402
 
 CFG = json.loads((HERE / "config.json").read_text())
 ACC = CFG["account_id"]
@@ -77,6 +76,12 @@ def next_number():
 # ---------------------------------------------------------------- images
 def story_image(cl):
     """Article's own image (og:image), else the feed's image. None if neither is usable."""
+    if "_img" not in cl:
+        cl["_img"] = _find_image(cl)
+    return cl["_img"]
+
+
+def _find_image(cl):
     lead = cl["stories"][0]
     for url in (cl.get("og_image"), lead.get("feed_image")):
         im = news.load_image(url)
@@ -107,16 +112,17 @@ def render(fmt, post, clusters, out, now, offline):
     date = local.strftime("%d %b %Y").upper()
     files = []
 
-    def img_for(cl, word):
+    def img_for(cl):
+        """The story's real picture and its credit, or (None, None). Never a placeholder."""
         if offline:                                    # tests: optional stand-in photo, no network
             t = os.environ.get("AI_NEWS_TEST_IMAGE")
             from PIL import Image
             im = Image.open(t).convert("RGB") if t else None
         else:
             im = story_image(cl)
-        if im is not None:
-            return im, f"IMAGE: {cl.get('image_source') or cl['stories'][0]['source']}"
-        return make_art(cl["stories"][0]["url"], word or "AI", W, MEDIA_H), None
+        if im is None:
+            return None, None
+        return im, f"IMAGE: {cl.get('image_source') or cl['stories'][0]['source']}"
 
     def save(slide, media=None):
         p = out / f"{len(files) + 1:02d}.jpg"
@@ -129,8 +135,8 @@ def render(fmt, post, clusters, out, now, offline):
         src = cl["sources"][0]
         slide = {"kicker": post["kicker"], "headline": post["headline"], "body": post["body"], "source": src}
         if fmt == "media_top":
-            im, credit = img_for(cl, post.get("image_word"))
-            save(dict(slide, layout="media_top", credit=credit), im)
+            im, credit = img_for(cl)
+            save(dict(slide, layout="media_top" if im is not None else "text", credit=credit), im)
         else:
             save(dict(slide, layout="text"))
 
@@ -138,26 +144,14 @@ def render(fmt, post, clusters, out, now, offline):
         cl = clusters[0]
         pts = post["points"]
         n = 2 + len(pts)
-        im, credit = img_for(cl, post.get("image_word"))
-        save({"layout": "media_top", "kicker": post["kicker"], "headline": post["headline"],
-              "body": post["body"], "swipe": True, "credit": credit}, im)
+        im, credit = img_for(cl)
+        save({"layout": "media_top" if im is not None else "text", "kicker": post["kicker"], "headline": post["headline"],
+              "body": post["body"], "swipe": True, "credit": credit, "source": cl["sources"][0]}, im)
         for i, p in enumerate(pts, 1):
-            save({"layout": "point", "num": f"{i:02d}", "headline": p["heading"], "body": p["body"],
-                  "page": f"{i + 1}/{n}"})
+            save({"layout": "point", "num": f"{i:02d}", "of": f"{len(pts):02d}", "headline": p["heading"],
+                  "body": p["body"], "page": f"{i + 1}/{n}"})
         save({"layout": "cta", "sources": cl["sources"][:5], "page": f"{n}/{n}"})
 
-    elif fmt == "roundup":
-        n = len(clusters) + 2
-        save({"layout": "roundup", "kicker": f"AI Brief · {local:%H:00} {local.tzname()}",
-              "headline": post["headline"], "items": post["items"], "swipe": True})
-        for i, (cl, sl) in enumerate(zip(clusters, post["slides"]), 2):
-            im, credit = img_for(cl, sl["kicker"])
-            save({"layout": "media_top", "kicker": sl["kicker"], "headline": sl["headline"], "body": sl["body"],
-                  "page": f"{i}/{n}", "credit": credit}, im)
-        srcs = []
-        for cl in clusters:
-            srcs += [s for s in cl["sources"][:2] if s not in srcs]
-        save({"layout": "cta", "sources": srcs[:5], "page": f"{n}/{n}"})
     return files
 
 
@@ -165,12 +159,7 @@ def caption(fmt, post, clusters):
     lines = [plain(post["headline"]), ""]
     lines.append(post.get("caption_summary") or plain(post.get("body", "")))
     lines.append("")
-    if fmt == "roundup":
-        srcs = []
-        for cl in clusters:
-            srcs += [s for s in cl["sources"][:2] if s not in srcs]
-    else:
-        srcs = clusters[0]["sources"][:3]
+    srcs = clusters[0]["sources"][:3]
     lines.append("Source: " + ", ".join(srcs))
     if post.get("question"):
         lines += ["", post["question"]]
@@ -188,7 +177,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--stories", help="JSON file of stories instead of fetching feeds (testing)")
     ap.add_argument("--out", help="write the post here instead of the queue (testing; nothing is recorded)")
-    ap.add_argument("--format", choices=["media_top", "text", "carousel", "roundup"], help="force a format")
+    ap.add_argument("--format", choices=["media_top", "text", "carousel"], help="force a format")
     ap.add_argument("--now", help="pretend time (ISO)")
     ap.add_argument("--always", action="store_true", help="make a post even if a fresh one is already waiting")
     a = ap.parse_args()
@@ -214,9 +203,7 @@ def main():
 
     mix = CFG["format_mix"]
     fmt = a.format or mix[seen.get("runs", 0) % len(mix)]
-    if fmt == "roundup" and len(ranked) < 3:
-        fmt = "media_top"
-    clusters = ranked[:4] if fmt == "roundup" else ranked[:1]
+    clusters = ranked[:1]                  # every post covers exactly one story
     for cl in clusters:
         enrich(cl, offline)
 
@@ -224,8 +211,6 @@ def main():
     if post is None:                       # deep-dive carousel needs Claude; fall back to a single
         fmt = "media_top"
         post = writer.write(fmt, clusters, CFG["llm_model"])
-    if fmt == "media_top" and not offline and story_image(clusters[0]) is None:
-        fmt = "text"                       # no real picture: a clean text card beats generic art
     log(f"format: {fmt}, writer: {post['writer']}")
 
     if test:

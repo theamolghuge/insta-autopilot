@@ -20,10 +20,11 @@
     "carousel",
     "media_top",
     "text",
+    "media_top",
     "carousel",
     "media_top",
-    "roundup",
-    "media_top"
+    "text"
   ],
-  "llm_model": "claude-sonnet-5-5"
+  "llm_model": "claude-sonnet-5-5",
+  "theme": "minimal"
 }

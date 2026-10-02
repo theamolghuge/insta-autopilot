@@ -15,32 +15,45 @@
   Sources credited on every post
   ```
 
-## Visual system (implemented in `generator/ai-news/brand.py`)
+## Visual system: "Minimal" (implemented in `generator/ai-news/brand.py`, theme `minimal`)
 | Token | Value | Use |
 |---|---|---|
 | Background | `#000000` black | every slide |
-| Text | `#FFFFFF` white | headlines; body is `#D6D6D6` |
-| Highlight | `#FFD60A` yellow | the important words (wrap them in `[brackets]`), category tag, numbers, brand dot |
-| Muted | `#808080` | date, page counter, source |
+| Headline | `#FFFFFF` white | headlines |
+| Highlight | `#FFD60A` yellow | important words (wrap them in `[brackets]`), category chip, numbers, brand dot |
+| Body | `#A8A8A8` grey | summaries and point text |
+| Meta | `#6E6E6E` | source, date, page counter |
 
-- **Typography (fixed):** Space Grotesk Bold for headlines and numbers, Inter for body text,
-  JetBrains Mono (uppercase, letter-spaced) for labels. All OFL, bundled in `generator/ai-news/fonts/`.
-- Size 1080 x 1350 (4:5), JPEG.
-- Every slide: yellow dot + `AI NEWS` top-left, date top-right, handle bottom-left,
-  source / page counter / `SWIPE ->` bottom-right, yellow category tag above the headline.
-- **With a picture:** the article's own image fills the top 40% (540 px) and fades into black;
-  text sits in the bottom 60%. Image credit `IMAGE: <SOURCE>` sits on the picture.
-- **Without a picture:** text-only card with a large headline.
+**Typography (fixed):**
+| Role | Typeface | Setting |
+|---|---|---|
+| Headline | Inter Tight Bold (700) | 48-68 px, tracking -2.8%, line height 1.08, sentence case |
+| Body | Geist Regular | 40-42 px, line height 1.42 |
+| Labels (chip, source, date, handle, page) | Geist Mono Medium | 24 px |
+| Brand mark | Inter Tight ExtraBold | "AI News" + yellow dot |
 
-## Formats (rotation in `generator/ai-news/config.json` -> `format_mix`)
+Headlines stay moderate and body text stays large, so posts read easily on a phone.
+All fonts are OFL and bundled in `generator/ai-news/fonts/`.
+
+**Layout**
+- 1080 x 1350 (4:5), JPEG.
+- **With a picture:** the article's own image sits in the top 40% as a rounded inset (30 px corners),
+  "AI News" pill on it top-left, `IMAGE: <SOURCE>` credit bottom-right. Text fills the bottom 60%.
+- **No picture available:** the slide becomes text-only. Never a placeholder or generated image.
+- Above every headline: yellow outlined category chip, then `Source · date` in Geist Mono.
+- Footer: thin rule, handle bottom-left, date / page counter / `Swipe →` bottom-right.
+
+Alternative themes `newsroom` (Archivo condensed caps) and `editorial` (Instrument Serif) are kept in
+`brand.py` for reference; switch with `"theme"` in `generator/ai-news/config.json`.
+
+## Formats (one story per post, always)
 | Format | What it is |
 |---|---|
-| `media_top` | single: article image on top 40%, headline + 1-2 sentence summary below |
+| `media_top` | single: article image on top 40%, headline + 1-2 sentence summary below (text-only if no image) |
 | `text` | single: headline + summary, no image |
-| `carousel` | one big story: cover with image, 2-3 points (what happened / why it matters / what's next), sources + follow slide. Needs the Claude writer |
-| `roundup` | top 3-4 stories: numbered list cover, one image slide per story, sources + follow slide |
+| `carousel` | deep dive on ONE story: cover, 2-3 points (what happened / why it matters / what to watch), sources + follow slide. Needs the Claude writer; without it a single is made instead |
 
-Default rotation (8 runs = 1 day): image, carousel, image, text, carousel, image, roundup, image.
+Default rotation (8 runs = 1 day): image, carousel, image, text, image, carousel, image, text.
 
 ## Content rules
 - One post every 3 hours, always the biggest story not yet covered (ranked by how many outlets cover it, freshness,

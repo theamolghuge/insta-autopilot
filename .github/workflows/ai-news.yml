@@ -17,7 +17,7 @@ on:
       format:
         description: "Force a format (leave empty to follow the rotation)"
         type: choice
-        options: ["", media_top, text, carousel, roundup]
+        options: ["", media_top, text, carousel]
         default: ""
 
 permissions:

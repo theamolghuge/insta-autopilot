@@ -16,7 +16,8 @@ Read `README.md` (how it runs) and `HOW_TO.md` (common jobs) first.
 ## AI news page (ai.news.daily)
 Fully automatic: `.github/workflows/ai-news.yml` -> `generator/ai-news/make_post.py` makes and posts one post every 3 hours.
 Don't hand-make batches for it. To change the look, edit `generator/ai-news/brand.py` and follow
-`brand/ai.news.daily/BRAND.md` (black bg, white text, yellow `[highlights]`, Space Grotesk / Inter / JetBrains Mono).
+`brand/ai.news.daily/BRAND.md` (black bg, white text, yellow `[highlights]`, Minimal theme: Inter Tight / Geist / Geist Mono).
+One story per post. If no real article image is found, use a text slide, never a placeholder.
 Test with `python generator/ai-news/make_post.py --out out/test` (add `--stories file.json` to work offline).
 `content/ai.news.daily/seen.json` is written by the workflow; don't edit it by hand.
 

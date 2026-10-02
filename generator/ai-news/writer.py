@@ -23,35 +23,25 @@ SCHEMA = {
     "single": """{
   "kicker": one of %(cats)s,
   "headline": "max 12 words, with [highlight]",
-  "body": "1-2 sentences, max 32 words: what happened and the key detail",
+  "body": "1-2 sentences, max 26 words: what happened and the key detail",
   "caption_summary": "2-4 short sentences for the caption: what happened, why it matters",
   "question": "one short question to invite comments, or empty string",
-  "hashtags": ["3-5 specific hashtags for this story, e.g. #openai"],
-  "image_word": "one short word to print on a fallback graphic, e.g. GEMINI"
+  "hashtags": ["3-5 specific hashtags for this story, e.g. #openai"]
 }""",
     "carousel": """{
   "kicker": one of %(cats)s,
   "headline": "cover headline, max 12 words, with [highlight]",
-  "body": "cover line, max 22 words",
+  "body": "cover line, max 20 words",
   "points": [
-    {"heading": "What happened (max 7 words, may use [highlight])", "body": "max 40 words"},
-    {"heading": "Why it [matters] or similar, max 7 words", "body": "max 40 words"},
-    {"heading": "What to watch next, max 7 words", "body": "max 40 words; only if the source supports it"}
+    {"heading": "What happened (max 7 words, may use [highlight])", "body": "max 34 words"},
+    {"heading": "Why it [matters] or similar, max 7 words", "body": "max 34 words"},
+    {"heading": "What to watch next, max 7 words", "body": "max 34 words; only if the source supports it"}
   ],
   "caption_summary": "2-4 short sentences",
   "question": "one short question, or empty string",
-  "hashtags": ["3-5 specific hashtags"],
-  "image_word": "one short word"
+  "hashtags": ["3-5 specific hashtags"]
 }
 Give 2 or 3 points. Drop the third if the source doesn't support it.""",
-    "roundup": """{
-  "headline": "max 6 words, with [highlight], e.g. 'The AI news [you missed]'",
-  "items": ["one line per story, max 9 words each, with [highlight], same order as given"],
-  "slides": [{"kicker": one of %(cats)s, "headline": "max 12 words with [highlight]", "body": "max 26 words"}],
-  "caption_summary": "one line per story, each starting with a number like '1/'",
-  "hashtags": ["3-5 hashtags"]
-}
-"items" and "slides" have exactly one entry per story, in the given order.""",
 }
 
 
@@ -93,20 +83,12 @@ def _check(post, fmt, n):
         if k in post:
             post[k] = fix(post[k])
     if post.get("kicker") not in CATEGORIES:
-        post["kicker"] = "Business" if fmt != "roundup" else None
+        post["kicker"] = "Business"
     if fmt == "carousel":
         pts = [p for p in post.get("points", []) if p.get("heading") and p.get("body")][:3]
         if len(pts) < 2:
             raise ValueError("carousel needs 2+ points")
         post["points"] = [{"heading": fix(p["heading"]), "body": fix(p["body"])} for p in pts]
-    if fmt == "roundup":
-        if len(post.get("items", [])) != n or len(post.get("slides", [])) != n:
-            raise ValueError("roundup length mismatch")
-        post["items"] = [fix(x) for x in post["items"]]
-        for sl in post["slides"]:
-            sl["headline"], sl["body"] = fix(sl.get("headline")), fix(sl.get("body"))
-            if sl.get("kicker") not in CATEGORIES:
-                sl["kicker"] = "Business"
     tags = [t if t.startswith("#") else "#" + t for t in post.get("hashtags", []) if t]
     post["hashtags"] = [re.sub(r"[^#\w]", "", t.lower()) for t in tags][:5]
     if not post.get("headline"):
@@ -119,8 +101,9 @@ def write_llm(fmt, clusters, model):
     if not key:
         return None
     blocks = "\n".join(_story_block(i + 1, c) for i, c in enumerate(clusters))
-    prompt = (f"Format: {fmt}\n\n{blocks}\nReturn JSON exactly in this shape:\n"
-              + SCHEMA[fmt] % {"cats": json.dumps(CATEGORIES)})
+    shape = SCHEMA["carousel" if fmt == "carousel" else "single"]
+    prompt = (f"Format: {'carousel' if fmt == 'carousel' else 'single post'}\n\n{blocks}\n"
+              f"Return JSON exactly in this shape:\n" + shape % {"cats": json.dumps(CATEGORIES)})
     last = None
     for _ in range(2):
         try:
@@ -192,20 +175,10 @@ def first_sentences(text, max_words=32):
 
 
 def write_rules(fmt, clusters):
-    if fmt == "roundup":
-        slides, items = [], []
-        for c in clusters:
-            s = c["stories"][0]
-            items.append(auto_highlight(s["title"]))
-            slides.append({"kicker": kicker_for(s["title"] + " " + s["summary"]),
-                           "headline": auto_highlight(s["title"]), "body": first_sentences(s["summary"], 26)})
-        return {"headline": "The AI news [you missed]", "items": items, "slides": slides,
-                "caption_summary": "\n".join(f"{i}/ {c['stories'][0]['title']}" for i, c in enumerate(clusters, 1)),
-                "hashtags": []}
     s = clusters[0]["stories"][0]
     return {"kicker": kicker_for(s["title"] + " " + s["summary"]), "headline": auto_highlight(s["title"]),
-            "body": first_sentences(s["summary"], 28), "caption_summary": first_sentences(s["summary"], 60),
-            "question": "", "hashtags": [], "image_word": kicker_for(s["title"])}
+            "body": first_sentences(s["summary"], 24), "caption_summary": first_sentences(s["summary"], 60),
+            "question": "", "hashtags": []}
 
 
 def write(fmt, clusters, model):

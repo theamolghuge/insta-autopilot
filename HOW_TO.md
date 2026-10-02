@@ -41,7 +41,7 @@ Each folder needs `01.jpg` (and `02.jpg`... for carousels) plus `caption.txt`.
 - **Preview without posting:** Actions > AI news > Run workflow > mode `preview`. Download the images from the run.
 - **Post one right now:** Actions > AI news > Run workflow > mode `normal` (optionally pick a format).
 - **Change the mix of formats:** edit `format_mix` in `generator/ai-news/config.json`
-  (`media_top`, `text`, `carousel`, `roundup`).
+  (`media_top`, `text`, `carousel`). Every post covers one story.
 - **Change how often:** edit the `cron` line in `.github/workflows/ai-news.yml` (e.g. `23 */2 * * *` for every 2 hours).
   The account has no `slots`; the AI news workflow posts by itself and retries a failed post on its next run.
 - **Add or remove a news source:** edit `FEEDS` in `generator/ai-news/news.py`.
