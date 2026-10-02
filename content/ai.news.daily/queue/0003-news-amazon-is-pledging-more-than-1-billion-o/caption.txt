@@ -1,0 +1,19 @@
+Amazon is pledging more than $1 billion over five years to the US towns that host its data centers, as local backlash slows the AI buildout.
+
+Amazon announced "Built Together", a program that adds more than $1 billion over five years for US communities where it runs data centers, on top of the $1 billion-plus it says it gave them over the past three years.
+
+The money targets free community college for an estimated 300,000 students, 16 new skilled-trades training centers, and energy upgrades for 300+ schools and community buildings and 30,000+ homes. Communities also get flexible yearly funding for local priorities like roads, parks and fire equipment.
+
+Amazon also says it will stop using NDAs with government agencies on new projects, use cleaner Tier 4 backup generators at new sites, publish its energy and water use every year, and pay enough for power to keep local bills from rising.
+
+AWS CEO Matt Garman wrote that more than 100 data center moratoriums are being considered across the US, and warned that enacting them could cost the country its lead in AI.
+
+For scale: Amazon expects about $220 billion in capital spending this year, so the new pledge is roughly a tenth of 1% of that, GeekWire notes. Unlike Microsoft, Amazon did not commit to giving up local tax breaks.
+
+Would you want an AI data center in your town?
+
+Source: GeekWire, Amazon, Newsweek
+
+Follow @ainews.18 for the latest AI news, every 3 hours.
+.
+#amazon #aws #datacenters #aiinfrastructure #ainews #artificialintelligence #ai #machinelearning #genai #tech #technews #llm

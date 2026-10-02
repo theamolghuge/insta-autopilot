@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-10-02T16:29:59.707658+00:00",
+  "format": "single",
+  "writer": "claude-task",
+  "stories": [
+    {
+      "title": "Amazon pledges $1B to data center communities, warns that local opposition threatens U.S. AI lead",
+      "url": "https://www.geekwire.com/2026/amazon-pledges-1b-to-data-center-communities-warns-that-local-opposition-threatens-u-s-ai-lead/",
+      "sources": [
+        "GeekWire",
+        "Amazon",
+        "Newsweek"
+      ],
+      "score": null
+    }
+  ]
+}
