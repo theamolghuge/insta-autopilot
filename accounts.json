@@ -13,7 +13,7 @@
       "token_secret": "IG_TOKEN_AI_NEWS_DAILY",
       "timezone": "UTC",
       "slots": [],
-      "enabled": false,
+      "enabled": true,
       "note": "Posted by .github/workflows/ai-news.yml every 3 hours, not by slots."
     }
   ]
