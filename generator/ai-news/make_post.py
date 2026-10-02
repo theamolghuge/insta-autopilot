@@ -79,8 +79,10 @@ def tidy_queue(now, dry, drop_all=False):
 
 
 def next_number():
-    nums = [int(p.name[:4]) for p in QUEUE.glob("[0-9][0-9][0-9][0-9]-*")] if QUEUE.exists() else []
-    return max(nums, default=0) + 1
+    """Never reuse a number: posted folders are deleted by the daily cleanup but stay in state/."""
+    sys.path.insert(0, str(ROOT / "scripts"))
+    from next_number import next_number as nn
+    return nn(ACC)
 
 
 # ---------------------------------------------------------------- images

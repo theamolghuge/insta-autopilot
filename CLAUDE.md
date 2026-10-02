@@ -7,7 +7,8 @@ Read `README.md` (how it runs) and `HOW_TO.md` (common jobs) first.
 1. Read `brand/<account>/BRAND.md` for voice, visuals and content rules.
 2. Copy the latest `generator/<account>/batch_NNN.py` to the next number and write fresh content.
    Do not repeat topics/quotes from earlier batches (grep the earlier batch files).
-   Set `START` to the next free queue number (`ls content/<account>/queue | tail -1`).
+   Set `START` to `python scripts/next_number.py <account>`. Posted folders are deleted daily,
+   so `ls content/<account>/queue` is NOT a safe way to find the next number.
 3. Compute every money figure in code; check yearly limits against irs.gov.
 4. Run it, then `python scripts/preview.py <account>` and look at the sheet before committing.
 5. Check `python scripts/publish.py --dry-run --account <account>` works.
@@ -19,10 +20,12 @@ brief; `.github/workflows/ai-news.yml` renders and posts it (`generator/ai-news/
 Don't hand-make batches for it. Look: `brand/ai.news.daily/BRAND.md` (post cards + headline covers, black/white/yellow,
 Inter Tight / Geist / Geist Mono). One story per post. No real article image -> text-only card, never a placeholder.
 Test: `python generator/ai-news/make_post.py --brief <file> --out out/test --no-fetch`.
+AI news images/videos are never committed to main (`.gitignore`); each run puts them on the `media` branch.
 `content/ai.news.daily/seen.json` is written by the workflow; don't edit it by hand.
 
 ## Rules
 - Never put access tokens in files, commits or chat. They live only in GitHub secrets.
 - Never edit `state/*.json` by hand unless asked; the workflow owns it.
-- Don't renumber or delete queue folders that are already listed as posted in `state/`.
+- Don't renumber unposted queue folders, and never reuse a number (see `scripts/next_number.py`).
+- Posted folders are removed automatically each day by `.github/workflows/cleanup.yml`; that's expected.
 - Images: JPEG, same size within a carousel, 2-10 images per carousel.

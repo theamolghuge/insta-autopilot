@@ -11,7 +11,7 @@ See **HOW_TO.md** for everyday jobs (new batches, new accounts, previews) and `b
 
 ```
 accounts.json                        which accounts, their posting times and time zone
-content/<account>/queue/NNNN-name/   one folder per post, published in number order
+content/<account>/queue/NNNN-name/   one folder per post, published in number order (deleted daily once live)
     01.jpg                           1 image  = single post
     01.jpg ... 10.jpg                2-10     = carousel (same size, JPEG only)
     caption.txt                      caption (max 2,200 characters, 30 hashtags)
@@ -22,6 +22,9 @@ scripts/publish.py                   the poster
 scripts/tokens.py                    checks / refreshes access tokens
 .github/workflows/                   the schedules (publish.yml every 15 min, ai-news.yml every 3 h, tokens.yml weekly)
 ```
+
+Cleanup: `.github/workflows/cleanup.yml` deletes posts that are live once a day, so the repo doesn't keep growing.
+New batches take their numbers from `scripts/next_number.py` (numbers are never reused).
 
 Rules the poster follows:
 - One post per time slot. If GitHub can't run within 2 hours of a slot, that slot is skipped (no bursts of late posts).
@@ -69,8 +72,8 @@ No computer needed. Every 3 hours:
    If not, it collects the news itself and posts a simpler version (Claude-written if `ANTHROPIC_API_KEY` is set).
 
 Formats: single post card, carousel, and Reels (`video`): an official company clip inside the post card,
-or a slow zoom over the article picture. Videos are not stored on `main`: each run commits them alone to the
-`media` branch (replaced every time) and Instagram fetches them through jsDelivr.
+or a slow zoom over the article picture. Images and videos are not stored on `main`: each run commits them
+alone to the `media` branch (replaced every time) and Instagram fetches them through jsDelivr.
 
 Turn it on: add the `IG_TOKEN_AI_NEWS_DAILY` secret, then set `"enabled": true` for `ai.news.daily` in `accounts.json`.
 Try it first: Actions > **AI news** > Run workflow > `preview` (images are attached to the run; nothing is posted).

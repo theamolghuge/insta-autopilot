@@ -22,7 +22,8 @@ Edit `accounts.json`: change `slots` (24h, in the account's `timezone`) or set `
 
 ## Make a new batch by hand
 1. Copy `generator/fin.ance18/batch_002.py` to `batch_003.py`.
-2. Replace the content lists and set `START` to the next free number (`ls content/fin.ance18/queue`).
+2. Replace the content lists and set `START` to `python scripts/next_number.py fin.ance18`
+   (posted folders are deleted daily, so don't go by `ls`).
 3. Run it, preview, commit and push.
 
 ## Post something specific next
@@ -49,6 +50,11 @@ Each folder needs `01.jpg` (and `02.jpg`... for carousels) plus `caption.txt`.
 - **Add or remove a news source:** edit `FEEDS` in `generator/ai-news/news.py`.
 - **Rename the handle:** change `handle` in `generator/ai-news/config.json` (the account id can stay).
 
+## Cleanup (automatic)
+Every day at 02:11 IST `.github/workflows/cleanup.yml` deletes queue folders whose post is live (listed in
+`state/<account>.json`). Unposted and failed posts are never touched; the posting log in `state/` is kept.
+Run it by hand: Actions > Daily cleanup > Run workflow (tick dry-run to only see what it would delete).
+
 ## Folder map
 | Path | What |
 |---|---|
@@ -60,4 +66,4 @@ Each folder needs `01.jpg` (and `02.jpg`... for carousels) plus `caption.txt`.
 | `generator/selfhelp-theme/` | self-help highlighter quote generator + 56 ready quotes |
 | `brand/fin.ance18/` | logos, bio, brand rules |
 | `scripts/` | publisher, token tools, preview |
-| `.github/workflows/` | schedules: publish every 15 min, AI news every 3 h, token refresh every Monday |
+| `.github/workflows/` | schedules: publish every 15 min, AI news every 3 h, cleanup daily, token refresh every Monday |

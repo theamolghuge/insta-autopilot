@@ -1,0 +1,46 @@
+name: Daily cleanup
+
+# Once a day: delete queue folders whose post is already live (listed as posted in state/),
+# for every account, so the repo doesn't keep growing. Posting logs in state/ are kept.
+
+on:
+  schedule:
+    - cron: "41 20 * * *"      # 20:41 UTC = 02:11 IST, a quiet time for both accounts
+  workflow_dispatch:
+    inputs:
+      dry-run:
+        description: "Only list what would be deleted"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: cleanup
+  cancel-in-progress: false
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Delete posted folders
+        id: clean
+        run: python scripts/cleanup.py ${{ inputs.dry-run && '--dry-run' || '' }} | tee -a "$GITHUB_STEP_SUMMARY"
+
+      - name: Commit
+        if: steps.clean.outputs.changed == 'true'
+        run: |
+          git config user.name "autopilot-bot"
+          git config user.email "autopilot-bot@users.noreply.github.com"
+          git add -A content
+          git commit -q -m "Daily cleanup: remove posts that are live [skip ci]" || exit 0
+          for i in 1 2 3 4 5; do git pull -q --rebase && git push -q && exit 0; sleep 10; done
+          exit 1

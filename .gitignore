@@ -5,6 +5,7 @@ build/
 preview_*.jpg
 out/
 
-# AI news videos are hosted on the `media` branch (see ai-news.yml), never on main
+# AI news images and videos are hosted on the `media` branch (see ai-news.yml), never on main
 content/ai.news.daily/**/*.mp4
+content/ai.news.daily/**/*.jpg
 content/ai.news.daily/**/_clip
