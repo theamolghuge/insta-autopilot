@@ -1,0 +1,19 @@
+OpenAI has parted ways with three safety researchers who allegedly shared confidential information with an outside AI safety group, the WSJ reports.
+
+OpenAI has let go of three researchers from its safety team, The Wall Street Journal reported on Thursday. They allegedly shared confidential company information with a third-party AI safety organization.
+
+In a statement, OpenAI said an internal investigation confirmed the three had mishandled sensitive information outside established company procedures, breaking the trust essential to its work.
+
+The report did not name the researchers, the organization, or what information was involved.
+
+The exits come two days after The New York Times reported that OpenAI executives brushed aside employee warnings about its safety practices. OpenAI told the Times it takes security concerns seriously.
+
+It is not the first time: in 2024, OpenAI fired researchers Leopold Aschenbrenner and Pavel Izmailov over alleged leaks, The Information reported.
+
+Where should the line be between transparency and company secrets?
+
+Source: TechCrunch, The Neuron
+
+Follow @ainews.18 for the latest AI news, every 3 hours.
+.
+#openai #aisafety #chatgpt #ainews #artificialintelligence #ai #machinelearning #genai #tech #technews #llm
