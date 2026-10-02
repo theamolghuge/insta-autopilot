@@ -1,0 +1,19 @@
+Apple is tightening Full Disk Access on Macs, warning that AI agents make the setting riskier
+
+Apple says it will add new controls to Full Disk Access, the macOS permission that lets an app see a user's files, mail, messages and even browsing history.
+
+The setting was built so backup apps could work properly. Apple says some developers now use it in ways that expose everything on a Mac without users fully understanding it.
+
+Going forward, granting an app that level of access will require "very explicit user action," according to a post on Apple's developer site. Apple did not give a timeline.
+
+The company tied the change directly to AI: as agents become more capable and autonomous, it says the risks of this kind of access will grow substantially.
+
+The move follows an Inc. columnist's report that Meta's Muse agent on Mac knew the content of his private messages, a claim Meta disputed, and a Wired report on a flaw in ChatGPT's Mac app that could have exposed sensitive data.
+
+Would you give an AI agent full access to your computer?
+
+Source: TechCrunch, Apple Developer
+
+Follow @ainews.18 for the latest AI news, every 3 hours.
+.
+#apple #macos #aiagents #privacy #ainews #artificialintelligence #ai #machinelearning #genai #tech #technews #llm
