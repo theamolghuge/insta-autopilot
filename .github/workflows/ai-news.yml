@@ -11,7 +11,7 @@ on:
     branches: [main]
     paths: ["content/ai.news.daily/briefs/**"]
   schedule:
-    - cron: "50 */3 * * *"     # 00:50, 03:50 ... UTC: 45 min after the Claude task, only acts if it didn't
+    - cron: "57 */3 * * *"     # 00:57, 03:57 ... UTC: 45 min after the Claude task (:12), only acts if it didn't post
   workflow_dispatch:
     inputs:
       mode:
