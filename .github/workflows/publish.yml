@@ -2,7 +2,7 @@ name: Publish posts
 
 on:
   schedule:
-    - cron: "*/15 * * * *"     # every 15 minutes (GitHub may run a few minutes late)
+    - cron: "7,22,37,52 * * * *"   # every 15 min, off the busy :00/:15 marks (GitHub may run a few minutes late)
   workflow_dispatch:
     inputs:
       mode:
