@@ -134,7 +134,8 @@ jobs:
         id: pub
         if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview' && inputs.mode != 'make-only'
         env:
-          ALL_SECRETS: ${{ toJSON(secrets) }}
+          IG_TOKEN_FIN_ANCE18: ${{ secrets.IG_TOKEN_FIN_ANCE18 }}
+          IG_TOKEN_AI_NEWS_DAILY: ${{ secrets.IG_TOKEN_AI_NEWS_DAILY }}
         run: python scripts/publish.py --force --account "${{ steps.acc.outputs.id }}"   # media URLs from "Host media"
 
       - name: Save posting state

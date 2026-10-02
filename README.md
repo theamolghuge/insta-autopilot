@@ -49,7 +49,7 @@ Rules the poster follows:
 ## Adding another Instagram account
 
 1. Generate a token for the new account in the same Meta app (it needs to be a Professional account).
-2. Add it as a secret, e.g. `IG_TOKEN_MY_NEW_PAGE`.
+2. Add it as a secret, e.g. `IG_TOKEN_MY_NEW_PAGE`, and add a matching line `IG_TOKEN_MY_NEW_PAGE: ${{ secrets.IG_TOKEN_MY_NEW_PAGE }}` under `env:` in `publish.yml` and `tokens.yml` (never pass all secrets at once: GitHub blocks that as possibly malicious).
 3. Add an entry to `accounts.json`:
    ```json
    {"id": "my.new.page", "token_secret": "IG_TOKEN_MY_NEW_PAGE",

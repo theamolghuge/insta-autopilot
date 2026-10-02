@@ -35,7 +35,8 @@ jobs:
       - name: Publish due posts
         id: pub
         env:
-          ALL_SECRETS: ${{ toJSON(secrets) }}
+          IG_TOKEN_FIN_ANCE18: ${{ secrets.IG_TOKEN_FIN_ANCE18 }}
+          IG_TOKEN_AI_NEWS_DAILY: ${{ secrets.IG_TOKEN_AI_NEWS_DAILY }}
         run: |
           ARGS=""
           if [ "${{ inputs.mode }}" = "dry-run" ]; then ARGS="--dry-run"; fi

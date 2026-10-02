@@ -32,7 +32,7 @@ Each folder needs `01.jpg` (and `02.jpg`... for carousels) plus `caption.txt`.
 
 ## Add a new Instagram account (e.g. a self-help theme page)
 1. Make the account Professional, add it in your Meta app, generate its token.
-2. GitHub > Settings > Secrets > Actions: add `IG_TOKEN_<NAME>`.
+2. GitHub > Settings > Secrets > Actions: add `IG_TOKEN_<NAME>`, then add `IG_TOKEN_<NAME>: ${{ secrets.IG_TOKEN_<NAME> }}` under `env:` in `.github/workflows/publish.yml` and `tokens.yml`.
 3. Add it to `accounts.json` (id, token_secret, timezone, slots, enabled).
 4. Create `content/<id>/queue/` with posts. For the self-help style, render quotes with
    `generator/selfhelp-theme/make_posts.py` and put each image in its own folder with a caption.
