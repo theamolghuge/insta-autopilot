@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-10-02T21:14:20Z",
+  "format": "carousel",
+  "story": {
+    "title": "NVIDIA DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI",
+    "url": "https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/",
+    "source": "NVIDIA",
+    "published": "2026-10-02T13:00:39Z",
+    "image": "https://blogs.nvidia.com/wp-content/uploads/2026/10/nv-blog-1280x680-1.jpg"
+  },
+  "also": [
+    {"source": "VideoCardz", "url": "https://videocardz.com/newz/nvidia-dgx-spark-drops-to-64gb-memory-but-costs-more-than-the-original-128gb-version", "title": "NVIDIA DGX Spark drops to 64GB memory but costs more than the original 128GB version"},
+    {"source": "Wccftech", "url": "https://wccftech.com/nvidia-64-gb-dgx-spark-this-month-for-4999-usd-128-gb-spark-jumps-past-6000/", "title": "NVIDIA's 64 GB DGX Spark \"AI Supercomputer\" Launches This Month For $4999, While The 128 GB Spark Jumps Past $6000"}
+  ],
+  "post": {
+    "kicker": "Chips",
+    "headline": "Nvidia unveils a [64GB DGX Spark], its desktop AI supercomputer, starting at [$4,999]",
+    "points": [
+      {"text": "The new DGX Spark has [64GB of memory] and the same GB10 Grace Blackwell chip, and runs models up to [100 billion parameters] on device.", "image": ""},
+      {"text": "Two units can be linked with one cable to pool [128GB of memory], running models up to 200 billion parameters at up to [1.7x the speed].", "image": "https://blogs.nvidia.com/wp-content/uploads/2026/10/10-02-local-AI-blog-body.jpg"},
+      {"text": "It goes on sale [October 23] from Acer, ASUS, Dell, Gigabyte, HP and MSI, starting at [$4,999].", "image": ""}
+    ],
+    "caption_summary": "Nvidia announced a 64GB version of DGX Spark, its compact desktop system for running AI models, agents and fine-tuning locally instead of in the cloud.\n\nIt keeps the GB10 Grace Blackwell Superchip, DGX OS and the full Nvidia AI software stack of the 128GB model. Nvidia says a single unit handles models of up to 100 billion parameters.\n\nEvery unit has a built-in ConnectX-7 network card. Two can be connected with a QSFP cable to pool 128GB of memory, supporting models of up to 200 billion parameters. In Nvidia's Qwen 3.8 27B test, two clustered units ran up to 1.7x faster than one.\n\nThe 64GB model is sold only through Acer, ASUS, Dell, Gigabyte, HP and MSI, from October 23, starting at $4,999. A Sync Model Launcher tool for one-click local models is due at the end of the month.\n\nThe price is drawing attention: according to VideoCardz, the original 128GB DGX Spark launched at $3,999 and was raised to $4,699 in February, citing memory supply constraints.",
+    "question": "Would you pay $4,999 to run AI models at home?",
+    "hashtags": ["#nvidia", "#dgxspark", "#localai", "#aihardware"]
+  }
+}
