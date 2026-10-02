@@ -2,3 +2,5 @@ __pycache__/
 build/
 *.pyc
 .DS_Store
+preview_*.jpg
+out/

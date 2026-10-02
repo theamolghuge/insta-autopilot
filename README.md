@@ -5,6 +5,8 @@ Every 15 minutes GitHub checks each account's posting times. When a time has
 just passed, the next post in that account's queue is published through the
 official Instagram API.
 
+See **HOW_TO.md** for everyday jobs (new batches, new accounts, previews) and `brand/` for logos and bio.
+
 ## How it's organised
 
 ```
