@@ -1,0 +1,19 @@
+Nvidia unveils a 64GB DGX Spark, its desktop AI supercomputer, starting at $4,999
+
+Nvidia announced a 64GB version of DGX Spark, its compact desktop system for running AI models, agents and fine-tuning locally instead of in the cloud.
+
+It keeps the GB10 Grace Blackwell Superchip, DGX OS and the full Nvidia AI software stack of the 128GB model. Nvidia says a single unit handles models of up to 100 billion parameters.
+
+Every unit has a built-in ConnectX-7 network card. Two can be connected with a QSFP cable to pool 128GB of memory, supporting models of up to 200 billion parameters. In Nvidia's Qwen 3.8 27B test, two clustered units ran up to 1.7x faster than one.
+
+The 64GB model is sold only through Acer, ASUS, Dell, Gigabyte, HP and MSI, from October 23, starting at $4,999. A Sync Model Launcher tool for one-click local models is due at the end of the month.
+
+The price is drawing attention: according to VideoCardz, the original 128GB DGX Spark launched at $3,999 and was raised to $4,699 in February, citing memory supply constraints.
+
+Would you pay $4,999 to run AI models at home?
+
+Source: NVIDIA, VideoCardz, Wccftech
+
+Follow @ainews.18 for the latest AI news, every 3 hours.
+.
+#nvidia #dgxspark #localai #aihardware #ainews #artificialintelligence #ai #machinelearning #genai #tech #technews #llm

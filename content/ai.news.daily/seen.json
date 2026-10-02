@@ -9,14 +9,18 @@
   "aboutamazon.com/news/company-news/amazon-data-centers-built-together": "2026-10-02T16:29:59.707658+00:00",
   "newsweek.com/amazon-pledges-1-billion-for-data-center-communities-as-us-backlash-grows-12515431": "2026-10-02T16:29:59.707658+00:00",
   "techcrunch.com/2026/10/02/apple-says-its-tightening-macos-full-disk-access-controls-due-to-new-risks-from-ai-agents": "2026-10-02T18:15:34.974544+00:00",
-  "developer.apple.com/news": "2026-10-02T18:15:34.974544+00:00"
+  "developer.apple.com/news": "2026-10-02T18:15:34.974544+00:00",
+  "blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync": "2026-10-02T21:19:54.297230+00:00",
+  "videocardz.com/newz/nvidia-dgx-spark-drops-to-64gb-memory-but-costs-more-than-the-original-128gb-version": "2026-10-02T21:19:54.297230+00:00",
+  "wccftech.com/nvidia-64-gb-dgx-spark-this-month-for-4999-usd-128-gb-spark-jumps-past-6000": "2026-10-02T21:19:54.297230+00:00"
  },
  "titles": {
   "OpenAI cuts ties with 3 safety researchers, WSJ reports": "2026-10-02T16:05:58.133598+00:00",
   "ChatGPT can now virtually try on clothes for you": "2026-10-02T16:08:46.541894+00:00",
   "Anthropic reportedly looking to IPO as early as mid-November": "2026-10-02T16:11:12.838896+00:00",
   "Amazon pledges $1B to data center communities, warns that local opposition threatens U.S. AI lead": "2026-10-02T16:29:59.707658+00:00",
-  "Apple says it's tightening macOS 'Full Disk Access' controls due to new risks from AI agents": "2026-10-02T18:15:34.974544+00:00"
+  "Apple says it's tightening macOS 'Full Disk Access' controls due to new risks from AI agents": "2026-10-02T18:15:34.974544+00:00",
+  "NVIDIA DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI": "2026-10-02T21:19:54.297230+00:00"
  },
- "runs": 5
+ "runs": 6
 }

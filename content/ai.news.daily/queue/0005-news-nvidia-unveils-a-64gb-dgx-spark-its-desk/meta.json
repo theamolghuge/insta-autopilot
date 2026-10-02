@@ -1,0 +1,17 @@
+{
+  "generated_at": "2026-10-02T21:19:54.297230+00:00",
+  "format": "carousel",
+  "writer": "claude-task",
+  "stories": [
+    {
+      "title": "NVIDIA DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI",
+      "url": "https://blogs.nvidia.com/blog/local-ai-dgx-spark-64gb-sync/",
+      "sources": [
+        "NVIDIA",
+        "VideoCardz",
+        "Wccftech"
+      ],
+      "score": null
+    }
+  ]
+}
