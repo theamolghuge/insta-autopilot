@@ -1,8 +1,14 @@
 name: Publish posts
 
+# GitHub's own timer is unreliable (it never fired for this repo), so the main trigger is a push:
+# a Claude scheduled task rewrites ticks/fin.ance18.txt a couple of minutes after each posting slot.
+# The run is safe to repeat: a slot is only ever filled once (state/<account>.json).
 on:
+  push:
+    branches: [main]
+    paths: ["ticks/**"]
   schedule:
-    - cron: "5,20,35,50 * * * *" # every 15 minutes
+    - cron: "5,20,35,50 * * * *" # backup only: every 15 minutes, if GitHub ever fires it
   workflow_dispatch:
     inputs:
       mode:
