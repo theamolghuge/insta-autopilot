@@ -1,4 +1,4 @@
-# @ai.news.daily brand kit
+# @ainews.18 brand kit (account id in the repo: ai.news.daily)
 
 **Niche:** the latest AI news from around the world: model launches, funding, policy, chips, research, tools.
 **Voice:** clear, neutral, fast. A sharp news editor, not a hype account. Facts from the source only;
