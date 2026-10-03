@@ -1,0 +1,27 @@
+{
+  "created_at": "2026-10-03T03:13:36Z",
+  "format": "carousel",
+  "story": {
+    "title": "Meta open sources code to let you make Muse AI gadgets",
+    "url": "https://www.theverge.com/tech/1004330/meta-muse-ai-gadgets-home-link",
+    "source": "The Verge",
+    "published": "2026-10-02T21:08:37Z",
+    "image": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/09/STKB394_MUSE_AI_CVIRGINIA_B.png?quality=90&strip=all&crop=0%2C9.9676601489831%2C100%2C80.064679702034&w=1200"
+  },
+  "also": [
+    {"source": "TechCrunch", "url": "https://techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget/", "title": "Meta wants your next gadget to be Muse-infused"}
+  ],
+  "post": {
+    "kicker": "Open Source",
+    "headline": "Meta open-sources the code to build your own [Muse AI gadgets]",
+    "points": [
+      {"text": "Meta released [open-source firmware] for ESP32 boards and a [Linux SDK] for devices like the Raspberry Pi.", "image": ""},
+      {"text": "Builders can wire Muse into [displays, buttons and sensors]. Ideas include an E Ink reminder screen and a TV stick.", "image": ""},
+      {"text": "Meta also built the [Muse Home Link], a USB-C gadget that lets Muse control lights, TVs and printers.", "image": "https://platform.theverge.com/wp-content/uploads/sites/2/2026/10/Screenshot-2026-10-02-at-2.07.16-PM.png?quality=90&strip=all&crop=0,0,100,100"},
+      {"text": "It made [5,000 Home Links] and is giving them free to Muse subscribers while supplies last.", "image": ""}
+    ],
+    "caption_summary": "Meta has launched Muse Gadgets, an open-source project that lets anyone build their own hardware for its Muse AI agent.\n\nThe kit includes open-source firmware for off-the-shelf ESP32 boards and a Linux SDK for computers like the Raspberry Pi. Meta says you can connect Muse to displays, buttons, sensors, actuators and whatever else is on your workbench, while warning builders to proceed at their own risk.\n\nSuggested projects include a color E Ink screen that shows reminders, an HDMI stick that puts Muse on a TV, and a small touchscreen device.\n\nMeta also built its own gadget, Muse Home Link. The USB-C device joins your home network so Muse can turn on lights, control a TV or send a document to a printer, using community-built skills.\n\nAccording to Meta Superintelligence Labs' Nat Friedman, the company made 5,000 Home Links and is giving them away free to Muse subscribers while supplies last, with shipping expected in the coming weeks.\n\nThe move comes as Meta pushes Muse beyond a chatbot, with new tools for small businesses and enterprises launched earlier this week.",
+    "question": "Would you build your own AI gadget?",
+    "hashtags": ["#meta", "#muse", "#opensource", "#raspberrypi", "#aiagents"]
+  }
+}
