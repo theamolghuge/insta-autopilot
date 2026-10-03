@@ -3,15 +3,13 @@ name: AI news
 # AI news page. Every 3 hours a Claude scheduled task picks the story, writes the post and pushes a
 # brief to content/ai.news.daily/briefs/ (see generator/ai-news/CLAUDE_TASK.md). That push starts this
 # workflow, which fetches the article image, renders the slides in the brand, commits and publishes.
-# The cron below is only a safety net: if no post went out in the last 2.5 h, it makes one by itself.
+# There is no timer: if a Claude run doesn't push a brief, that 3-hour slot is simply skipped.
 # Only touches the AI news account. fin.ance18 keeps running from publish.yml as before.
 
 on:
   push:
     branches: [main]
     paths: ["content/ai.news.daily/briefs/**"]
-  schedule:
-    - cron: "57 */3 * * *"     # 00:57, 03:57 ... UTC: 45 min after the Claude task (:12), only acts if it didn't post
   workflow_dispatch:
     inputs:
       mode:
@@ -62,7 +60,7 @@ jobs:
       - name: Make preview (no commit, no post)
         if: inputs.mode == 'preview' || steps.acc.outputs.enabled != 'true'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by the safety net
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by manual runs with no brief
         run: |
           if [ "${{ steps.acc.outputs.enabled }}" != "true" ] && [ "${{ github.event_name }}" != "workflow_dispatch" ]; then
             echo "Account ${{ steps.acc.outputs.id }} is not enabled in accounts.json; skipping." ; exit 0
@@ -84,12 +82,10 @@ jobs:
         id: make
         if: steps.acc.outputs.enabled == 'true' && inputs.mode != 'preview'
         env:
-          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by the safety net
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}   # optional, only used by manual runs with no brief
         run: |
           F="${{ inputs.format }}"
-          EXTRA=""
-          if [ "${{ github.event_name }}" = "schedule" ]; then EXTRA="--fallback"; fi
-          python generator/ai-news/make_post.py $EXTRA ${F:+--format $F}
+          python generator/ai-news/make_post.py ${F:+--format $F}
 
       # Images and videos never go on main (they'd make the repo grow forever). The new post's files are
       # committed alone to the `media` branch, which is replaced every run, and served by jsDelivr

@@ -115,4 +115,4 @@ Picture URLs must be direct image links from the article page you read (not from
 4. Finish with one line: the headline and the format. Nothing else is needed.
 
 If anything blocks you (no fresh story worth posting, repo access fails), stop without pushing.
-The GitHub safety net will post on its own 45 minutes later if needed.
+There is no backup poster: that 3-hour slot is simply skipped.

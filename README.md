@@ -38,7 +38,7 @@ Rules the poster follows:
 |---|---|
 | `IG_TOKEN_FIN_ANCE18` | Instagram access token for @fin.ance18 |
 | `IG_TOKEN_AI_NEWS_DAILY` | Instagram access token for the AI news page |
-| `ANTHROPIC_API_KEY` | optional: only used by the AI news safety net; normal posts are written by the Claude scheduled task |
+| `ANTHROPIC_API_KEY` | optional: only used by manual AI news runs with no brief; normal posts are written by the Claude scheduled task |
 | `SECRETS_PAT` | GitHub fine-grained token with **Secrets: read and write** on this repo, so tokens can renew themselves every Monday |
 
 ## Manual controls (Actions tab)
