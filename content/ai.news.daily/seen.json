@@ -17,7 +17,16 @@
   "cbsnews.com/news/trump-likely-jay-clayton-ai-czar-sources-say": "2026-10-03T00:14:31.852777+00:00",
   "cnn.com/2026/10/02/politics/jay-clayton-white-house-ai-czar": "2026-10-03T00:14:31.852777+00:00",
   "theverge.com/tech/1004330/meta-muse-ai-gadgets-home-link": "2026-10-03T03:14:45.054832+00:00",
-  "techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget": "2026-10-03T03:14:45.054832+00:00"
+  "techcrunch.com/2026/10/02/meta-wants-you-to-build-your-own-muse-gadget": "2026-10-03T03:14:45.054832+00:00",
+  "openai.com/index/devday-2026-recap": "2026-10-03T05:51:18.668370+00:00",
+  "openai.com/index/election-safeguards-2026": "2026-10-03T05:51:18.668370+00:00",
+  "openai.com/signals/research/2026q1-update": "2026-10-03T05:51:18.668370+00:00",
+  "blog.google/innovation-and-ai/technology/ai/google-ai-updates-september-2026": "2026-10-03T05:51:18.668370+00:00",
+  "blog.google/innovation-and-ai/technology/google-ai-updates-august-2026": "2026-10-03T05:51:18.668370+00:00",
+  "techcrunch.com/2026/10/02/disrupt-2026-layoff-expo-plus-passes-available-for-75-dollars": "2026-10-03T05:51:18.668370+00:00",
+  "techcrunch.com/2026/10/02/techcrunch-disrupt-2026-blackstones-jas-khaira-on-building-the-next-generation-of-ai-giants": "2026-10-03T05:51:18.668370+00:00",
+  "techcrunch.com/2026/10/02/techcrunch-disrupt-2026-clays-kareem-amin-on-the-rise-of-the-gtm-engineer": "2026-10-03T05:51:18.668370+00:00",
+  "huggingface.co/blog/state-of-open-models-summer-2026": "2026-10-03T05:51:18.668370+00:00"
  },
  "titles": {
   "OpenAI cuts ties with 3 safety researchers, WSJ reports": "2026-10-02T16:05:58.133598+00:00",
@@ -27,7 +36,8 @@
   "Apple says it's tightening macOS 'Full Disk Access' controls due to new risks from AI agents": "2026-10-02T18:15:34.974544+00:00",
   "NVIDIA DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI": "2026-10-02T21:19:54.297230+00:00",
   "Trump is expected to name intelligence director Jay Clayton as AI czar": "2026-10-03T00:14:31.852777+00:00",
-  "Meta open sources code to let you make Muse AI gadgets": "2026-10-03T03:14:45.054832+00:00"
+  "Meta open sources code to let you make Muse AI gadgets": "2026-10-03T03:14:45.054832+00:00",
+  "DevDay 2026 Recap": "2026-10-03T05:51:18.668370+00:00"
  },
- "runs": 8
+ "runs": 9
 }
