@@ -26,7 +26,10 @@
   "techcrunch.com/2026/10/02/disrupt-2026-layoff-expo-plus-passes-available-for-75-dollars": "2026-10-03T05:51:18.668370+00:00",
   "techcrunch.com/2026/10/02/techcrunch-disrupt-2026-blackstones-jas-khaira-on-building-the-next-generation-of-ai-giants": "2026-10-03T05:51:18.668370+00:00",
   "techcrunch.com/2026/10/02/techcrunch-disrupt-2026-clays-kareem-amin-on-the-rise-of-the-gtm-engineer": "2026-10-03T05:51:18.668370+00:00",
-  "huggingface.co/blog/state-of-open-models-summer-2026": "2026-10-03T05:51:18.668370+00:00"
+  "huggingface.co/blog/state-of-open-models-summer-2026": "2026-10-03T05:51:18.668370+00:00",
+  "techcrunch.com/2026/10/02/sean-parker-is-rebuilding-stability-ai-around-music": "2026-10-03T06:15:09.668408+00:00",
+  "tokenpost.com/news/business/26488": "2026-10-03T06:15:09.668408+00:00",
+  "theinformation.com/articles/sean-parker-spreads-gospel-ai-music": "2026-10-03T06:15:09.668408+00:00"
  },
  "titles": {
   "OpenAI cuts ties with 3 safety researchers, WSJ reports": "2026-10-02T16:05:58.133598+00:00",
@@ -37,7 +40,8 @@
   "NVIDIA DGX Spark 64GB Gives Developers More Ways to Build and Scale Local AI": "2026-10-02T21:19:54.297230+00:00",
   "Trump is expected to name intelligence director Jay Clayton as AI czar": "2026-10-03T00:14:31.852777+00:00",
   "Meta open sources code to let you make Muse AI gadgets": "2026-10-03T03:14:45.054832+00:00",
-  "DevDay 2026 Recap": "2026-10-03T05:51:18.668370+00:00"
+  "DevDay 2026 Recap": "2026-10-03T05:51:18.668370+00:00",
+  "Sean Parker is rebuilding Stability AI around music": "2026-10-03T06:15:09.668408+00:00"
  },
- "runs": 9
+ "runs": 10
 }
