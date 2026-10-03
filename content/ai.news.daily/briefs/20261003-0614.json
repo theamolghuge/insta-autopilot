@@ -1,0 +1,22 @@
+{
+  "created_at": "2026-10-03T06:14:21Z",
+  "format": "single",
+  "story": {
+    "title": "Sean Parker is rebuilding Stability AI around music",
+    "url": "https://techcrunch.com/2026/10/02/sean-parker-is-rebuilding-stability-ai-around-music/",
+    "source": "TechCrunch",
+    "published": "2026-10-02T21:09:14Z",
+    "image": "https://techcrunch.com/wp-content/uploads/2026/10/Sean-Parker.jpg?w=1024"
+  },
+  "also": [
+    {"source": "TokenPost", "url": "https://www.tokenpost.com/news/business/26488", "title": "Stability AI Raises $76 Million as It Expands Into Music Tools"},
+    {"source": "The Information", "url": "https://www.theinformation.com/articles/sean-parker-spreads-gospel-ai-music", "title": "Sean Parker Spreads the Gospel of AI Music"}
+  ],
+  "post": {
+    "kicker": "Business",
+    "headline": "Napster co-founder [Sean Parker] is rebuilding [Stability AI] as an AI toolmaker for [music professionals], backed by Sony, Warner and Universal.",
+    "caption_summary": "Sean Parker, who co-founded Napster, is steering Stability AI away from its image-generator roots and toward music, according to TechCrunch, citing an interview Parker gave The Information.\n\nThe goal: make Stability the go-to source of AI tools for music professionals. Parker says he is playing by the rules this time, conceding that Napster's ask-forgiveness-later approach didn't work out.\n\nIn late August, Stability announced $76 million in funding from investors including Sony, Warner and Universal. The three labels also licensed their catalogs for AI training as part of the deal.\n\nSince then the company has released three new audio models and AI music-editing software. The tools can generate full instrumental tracks or short snippets from text prompts.\n\nNext up, Parker says, is an update that lets users hum a melody or beatbox a drum pattern to steer the music.\n\nParker joined an $80 million rescue of Stability two years ago, after overspending and internal turmoil led to founder Emad Mostaque's exit. His longtime friend Prem Akkaraju became CEO.",
+    "question": "Would you use AI music tools trained on licensed label catalogs?",
+    "hashtags": ["#stabilityai", "#aimusic", "#seanparker", "#musicindustry"]
+  }
+}
