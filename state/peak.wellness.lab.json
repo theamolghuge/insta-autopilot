@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-04T12:00:00-04:00",
+  "last_slot": "2026-10-04T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -30,6 +30,12 @@
       "permalink": "https://www.instagram.com/p/DeFBU9HFEi4/",
       "posted_at": "2026-10-04T16:04:18.359156+00:00",
       "slot": "2026-10-04T12:00:00-04:00"
+    },
+    "0006-carousel-energy-myths": {
+      "media_id": "18176162176389663",
+      "permalink": "https://www.instagram.com/p/DeFPD9nlBpj/",
+      "posted_at": "2026-10-04T18:04:03.344357+00:00",
+      "slot": "2026-10-04T14:00:00-04:00"
     }
   },
   "failed": {},
