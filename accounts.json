@@ -5,7 +5,16 @@
       "id": "fin.ance18",
       "token_secret": "IG_TOKEN_FIN_ANCE18",
       "timezone": "America/New_York",
-      "slots": ["07:00", "09:00", "11:30", "13:00", "15:30", "18:00", "20:00", "21:30"],
+      "slots": [
+        "07:00",
+        "09:00",
+        "11:30",
+        "13:00",
+        "15:30",
+        "18:00",
+        "20:00",
+        "21:30"
+      ],
       "enabled": true
     },
     {
@@ -15,6 +24,16 @@
       "slots": [],
       "enabled": true,
       "note": "Posted by .github/workflows/ai-news.yml every 3 hours, not by slots."
+    },
+    {
+      "id": "peak.wellness.lab",
+      "token_secret": "IG_TOKEN_PEAK_WELLNESS_LAB",
+      "timezone": "Asia/Kolkata",
+      "slots": [
+        "13:00"
+      ],
+      "enabled": false,
+      "note": "Enable once the IG_TOKEN_PEAK_WELLNESS_LAB secret is added. 1 feed post a day at 1 PM IST (brand Automation spec)."
     }
   ]
 }
