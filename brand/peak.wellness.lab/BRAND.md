@@ -1,6 +1,7 @@
 # peak.wellness.lab: brand rules for posts
 
-Same system as fin.ance18 (simple text posts, a weekly batch, 8 posting slots a day). Only the look and the topic differ.
+Built the same way as fin.ance18 (simple text posts, a weekly batch, 8 posting slots a day) but runs completely on its own:
+own queue, state, token, look, content and posting times. Never reuse fin.ance18 content or styling.
 Renderer: `generator/peak.wellness.lab/brand.py` (the fin.ance18 renderer with this brand's colors and fonts).
 Batches: copy the latest `generator/peak.wellness.lab/batch_NNN.py` and change only the content lists and `START`.
 

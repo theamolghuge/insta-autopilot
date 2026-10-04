@@ -30,17 +30,17 @@
       "token_secret": "IG_TOKEN_PEAK_WELLNESS_LAB",
       "timezone": "America/New_York",
       "slots": [
-        "07:00",
-        "09:00",
-        "11:30",
-        "13:00",
-        "15:30",
-        "18:00",
-        "20:00",
-        "21:30"
+        "06:30",
+        "08:00",
+        "10:00",
+        "12:00",
+        "14:00",
+        "17:00",
+        "19:00",
+        "21:00"
       ],
       "enabled": true,
-      "note": "US + Europe audience. Same 8 New York slots as fin.ance18, so the same posting-tick scheduled tasks trigger both."
+      "note": "US + Europe audience. Own slots (none shared with fin.ance18). Posted by the 'peak.wellness.lab posting tick' scheduled tasks, which run the poster for this account only."
     }
   ]
 }

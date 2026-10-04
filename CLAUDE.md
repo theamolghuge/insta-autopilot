@@ -15,7 +15,8 @@ Read `README.md` (how it runs) and `HOW_TO.md` (common jobs) first.
 6. Commit and push to `main`. GitHub Actions picks it up automatically.
 
 ## Wellness page (peak.wellness.lab)
-Works exactly like fin.ance18: weekly batch in `generator/peak.wellness.lab/batch_NNN.py`, same 8 New York slots.
+Runs independently of fin.ance18 (own queue, state, token, brand, slots and scheduled tasks), built the same way: weekly batch in `generator/peak.wellness.lab/batch_NNN.py`.
+Never mix content, captions or brand files between accounts.
 Rules and look: `brand/peak.wellness.lab/BRAND.md`. No money/IRS rules here; food values from USDA, every number claim sourced.
 
 ## AI news page (ai.news.daily)
