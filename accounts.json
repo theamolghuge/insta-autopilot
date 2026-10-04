@@ -28,12 +28,19 @@
     {
       "id": "peak.wellness.lab",
       "token_secret": "IG_TOKEN_PEAK_WELLNESS_LAB",
-      "timezone": "Asia/Kolkata",
+      "timezone": "America/New_York",
       "slots": [
-        "13:00"
+        "07:00",
+        "09:00",
+        "11:30",
+        "13:00",
+        "15:30",
+        "18:00",
+        "20:00",
+        "21:30"
       ],
       "enabled": true,
-      "note": "1 feed post a day at 1 PM IST (brand Automation spec)."
+      "note": "US + Europe audience. Same 8 New York slots as fin.ance18, so the same posting-tick scheduled tasks trigger both."
     }
   ]
 }

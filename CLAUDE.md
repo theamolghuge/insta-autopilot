@@ -14,6 +14,10 @@ Read `README.md` (how it runs) and `HOW_TO.md` (common jobs) first.
 5. Check `python scripts/publish.py --dry-run --account <account>` works.
 6. Commit and push to `main`. GitHub Actions picks it up automatically.
 
+## Wellness page (peak.wellness.lab)
+Works exactly like fin.ance18: weekly batch in `generator/peak.wellness.lab/batch_NNN.py`, same 8 New York slots.
+Rules and look: `brand/peak.wellness.lab/BRAND.md`. No money/IRS rules here; food values from USDA, every number claim sourced.
+
 ## AI news page (ai.news.daily)
 Fully automatic. A Claude scheduled task follows `generator/ai-news/CLAUDE_TASK.md` every 3 hours and pushes a
 brief; `.github/workflows/ai-news.yml` renders and posts it (`generator/ai-news/make_post.py`).
