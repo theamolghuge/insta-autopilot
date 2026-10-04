@@ -43,6 +43,7 @@ jobs:
         env:
           IG_TOKEN_FIN_ANCE18: ${{ secrets.IG_TOKEN_FIN_ANCE18 }}
           IG_TOKEN_AI_NEWS_DAILY: ${{ secrets.IG_TOKEN_AI_NEWS_DAILY }}
+          IG_TOKEN_PEAK_WELLNESS_LAB: ${{ secrets.IG_TOKEN_PEAK_WELLNESS_LAB }}
         run: |
           ARGS=""
           if [ "${{ inputs.mode }}" = "dry-run" ]; then ARGS="--dry-run"; fi

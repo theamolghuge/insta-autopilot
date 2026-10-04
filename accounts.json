@@ -32,8 +32,8 @@
       "slots": [
         "13:00"
       ],
-      "enabled": false,
-      "note": "Enable once the IG_TOKEN_PEAK_WELLNESS_LAB secret is added. 1 feed post a day at 1 PM IST (brand Automation spec)."
+      "enabled": true,
+      "note": "1 feed post a day at 1 PM IST (brand Automation spec)."
     }
   ]
 }

@@ -23,5 +23,6 @@ jobs:
         env:
           IG_TOKEN_FIN_ANCE18: ${{ secrets.IG_TOKEN_FIN_ANCE18 }}
           IG_TOKEN_AI_NEWS_DAILY: ${{ secrets.IG_TOKEN_AI_NEWS_DAILY }}
+          IG_TOKEN_PEAK_WELLNESS_LAB: ${{ secrets.IG_TOKEN_PEAK_WELLNESS_LAB }}
           SECRETS_PAT: ${{ secrets.SECRETS_PAT }}
         run: python scripts/tokens.py ${{ inputs.mode || 'refresh' }}
