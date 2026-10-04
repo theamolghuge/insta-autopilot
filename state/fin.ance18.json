@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-04T15:30:00-04:00",
+  "last_slot": "2026-10-04T18:00:00-04:00",
   "posted": {
     "0001-single-01": {
       "media_id": "18487405435109798",
@@ -144,6 +144,12 @@
       "permalink": "https://www.instagram.com/p/DeFZPvqGuUY/",
       "posted_at": "2026-10-04T19:33:18.812356+00:00",
       "slot": "2026-10-04T15:30:00-04:00"
+    },
+    "0025-carousel-fee-cost": {
+      "media_id": "18023035139920544",
+      "permalink": "https://www.instagram.com/p/DeFqgOwERVr/",
+      "posted_at": "2026-10-04T22:03:43.238783+00:00",
+      "slot": "2026-10-04T18:00:00-04:00"
     }
   },
   "failed": {},
