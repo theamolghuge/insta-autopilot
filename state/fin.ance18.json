@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-05T07:00:00-04:00",
+  "last_slot": "2026-10-05T09:00:00-04:00",
   "posted": {
     "0001-single-01": {
       "media_id": "18487405435109798",
@@ -168,6 +168,12 @@
       "permalink": "https://www.instagram.com/p/DeHDtXBGyrr/",
       "posted_at": "2026-10-05T11:03:35.874332+00:00",
       "slot": "2026-10-05T07:00:00-04:00"
+    },
+    "0029-carousel-emergency-fund": {
+      "media_id": "18106330507952394",
+      "permalink": "https://www.instagram.com/p/DeHRfjVFk89/",
+      "posted_at": "2026-10-05T13:03:37.029272+00:00",
+      "slot": "2026-10-05T09:00:00-04:00"
     }
   },
   "failed": {},
