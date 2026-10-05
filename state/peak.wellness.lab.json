@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-04T21:00:00-04:00",
+  "last_slot": "2026-10-05T06:30:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -54,6 +54,12 @@
       "permalink": "https://www.instagram.com/p/DeF_JjhI-if/",
       "posted_at": "2026-10-05T01:04:29.801431+00:00",
       "slot": "2026-10-04T21:00:00-04:00"
+    },
+    "0010-carousel-desk-snacks": {
+      "media_id": "18082894847333442",
+      "permalink": "https://www.instagram.com/p/DeHDxkbm2Wm/",
+      "posted_at": "2026-10-05T11:03:35.874332+00:00",
+      "slot": "2026-10-05T06:30:00-04:00"
     }
   },
   "failed": {},
