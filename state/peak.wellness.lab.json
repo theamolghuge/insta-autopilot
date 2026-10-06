@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-05T21:00:00-04:00",
+  "last_slot": "2026-10-06T06:30:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -102,6 +102,12 @@
       "permalink": "https://www.instagram.com/p/DeImEMqmvpJ/",
       "posted_at": "2026-10-06T01:23:02.770610+00:00",
       "slot": "2026-10-05T21:00:00-04:00"
+    },
+    "0018-carousel-lunch-4-ways": {
+      "media_id": "18197192986387787",
+      "permalink": "https://www.instagram.com/p/DeJlL0enLiY/",
+      "posted_at": "2026-10-06T10:34:12.365912+00:00",
+      "slot": "2026-10-06T06:30:00-04:00"
     }
   },
   "failed": {},
