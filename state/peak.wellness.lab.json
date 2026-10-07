@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-07T12:00:00-04:00",
+  "last_slot": "2026-10-07T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -174,6 +174,12 @@
       "permalink": "https://www.instagram.com/p/DeMvyXAFMP2/",
       "posted_at": "2026-10-07T16:04:57.870440+00:00",
       "slot": "2026-10-07T12:00:00-04:00"
+    },
+    "0030-carousel-3000-steps": {
+      "media_id": "18145651432577579",
+      "permalink": "https://www.instagram.com/p/DeM9fCVGiny/",
+      "posted_at": "2026-10-07T18:04:19.566842+00:00",
+      "slot": "2026-10-07T14:00:00-04:00"
     }
   },
   "failed": {},
