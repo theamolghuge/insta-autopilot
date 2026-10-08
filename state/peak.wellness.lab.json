@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-08T12:00:00-04:00",
+  "last_slot": "2026-10-08T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -222,6 +222,12 @@
       "permalink": "https://www.instagram.com/p/DePUkt5ETkz/",
       "posted_at": "2026-10-08T16:04:53.198304+00:00",
       "slot": "2026-10-08T12:00:00-04:00"
+    },
+    "0038-carousel-smart-swaps-2": {
+      "media_id": "18123624760936023",
+      "permalink": "https://www.instagram.com/p/DePiRolGZnL/",
+      "posted_at": "2026-10-08T18:04:11.226021+00:00",
+      "slot": "2026-10-08T14:00:00-04:00"
     }
   },
   "failed": {},
