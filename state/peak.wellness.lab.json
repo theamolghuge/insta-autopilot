@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-07T21:00:00-04:00",
+  "last_slot": "2026-10-08T06:30:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -198,6 +198,12 @@
       "permalink": "https://www.instagram.com/p/DeNtewODTeY/",
       "posted_at": "2026-10-08T01:04:02.666374+00:00",
       "slot": "2026-10-07T21:00:00-04:00"
+    },
+    "0034-carousel-myths-2": {
+      "media_id": "18016170525465003",
+      "permalink": "https://www.instagram.com/p/DeOuzMplpya/",
+      "posted_at": "2026-10-08T10:34:20.790131+00:00",
+      "slot": "2026-10-08T06:30:00-04:00"
     }
   },
   "failed": {},
