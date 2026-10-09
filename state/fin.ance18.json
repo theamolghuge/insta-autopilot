@@ -206,32 +206,9 @@
       "slot": "2026-10-05T20:00:00-04:00"
     }
   },
-  "failed": {
-    "0035-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AH3yZxTXZhAA074W48eN8rO\"}}",
-    "0036-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"Ao2BYbBzUYVSY_JYOdw3cEK\"}}",
-    "0037-carousel-avalanche-vs-snowball": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AD-LRNeKlzo-EmCzMDoWu7G\"}}",
-    "0038-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AV2eODfwrWekjUkKQ5emBaC\"}}",
-    "0039-stat-7-2": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"Avq_G_f78kaycY2aOwfAb7g\"}}",
-    "0040-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AGPvUElKHtMKCjHVZNpQ9yj\"}}",
-    "0041-carousel-7-habits": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AxN1xkCKn2PmkZtSAR8_827\"}}",
-    "0042-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AaUL_1-mTeJP0JSdBvMP4OX\"}}",
-    "0043-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"A9AkGUO3f7Sd-5rMn773CIR\"}}",
-    "0044-stat-18k": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"AsWRGwy0f2EIGc-rSK1JszQ\"}}",
-    "0045-carousel-dca": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"ASa9OG-8VSdPrQElCyqjCy5\"}}",
-    "0046-quote": "POST 17841423567057539/media_publish -> HTTP 403: {\"error\":{\"message\":\"Application request limit reached\",\"type\":\"OAuthException\",\"is_transient\":false,\"code\":4,\"error_subcode\":2207051,\"error_user_title\":\"action is blocked\",\"error_user_msg\":\"We restrict certain activity to protect our community. Tell us if you think we made a mistake.\",\"fbtrace_id\":\"Ak0IBLlhZFqLvSySeyf9gHf\"}}"
-  },
-  "attempts": {
-    "0035-quote": 3,
-    "0036-quote": 3,
-    "0037-carousel-avalanche-vs-snowball": 3,
-    "0038-quote": 3,
-    "0039-stat-7-2": 3,
-    "0040-quote": 3,
-    "0041-carousel-7-habits": 3,
-    "0042-quote": 3,
-    "0043-quote": 3,
-    "0044-stat-18k": 3,
-    "0045-carousel-dca": 3,
-    "0046-quote": 3
-  }
+  "failed": {},
+  "attempts": {},
+  "blocked_until": "2026-10-11T19:03:05.851533+00:00",
+  "block_count": 1,
+  "block_reason": "action blocked"
 }
