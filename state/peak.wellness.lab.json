@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-09T12:00:00-04:00",
+  "last_slot": "2026-10-09T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -270,8 +270,15 @@
       "permalink": "https://www.instagram.com/p/DeR5XO4kbJT/",
       "posted_at": "2026-10-09T16:04:50.705507+00:00",
       "slot": "2026-10-09T12:00:00-04:00"
+    },
+    "0046-carousel-3pm-crash": {
+      "media_id": "18199128349340303",
+      "permalink": "https://www.instagram.com/p/DeSHFg2GT-o/",
+      "posted_at": "2026-10-09T18:04:07.717587+00:00",
+      "slot": "2026-10-09T14:00:00-04:00"
     }
   },
   "failed": {},
-  "attempts": {}
+  "attempts": {},
+  "block_count": 0
 }
