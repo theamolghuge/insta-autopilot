@@ -6,16 +6,13 @@
       "token_secret": "IG_TOKEN_FIN_ANCE18",
       "timezone": "America/New_York",
       "slots": [
-        "07:00",
         "09:00",
-        "11:30",
         "13:00",
-        "15:30",
         "18:00",
-        "20:00",
-        "21:30"
+        "20:00"
       ],
-      "enabled": true
+      "enabled": true,
+      "note": "Cut from 8 to 4 posts/day on 2026-10-09 after Instagram's 'action blocked' (Oct 6-9). Raise slowly once posts go out cleanly for 1-2 weeks."
     },
     {
       "id": "ai.news.daily",

@@ -13,7 +13,7 @@ State:         state/<account id>.json  (what has been posted, written by this s
 
 Only the Python standard library is used.
 """
-import argparse, datetime as dt, json, os, sys, time, urllib.parse, urllib.request, urllib.error
+import argparse, datetime as dt, json, os, random, sys, time, urllib.parse, urllib.request, urllib.error
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -24,6 +24,34 @@ API_BASE = os.environ.get("IG_API_BASE", "https://graph.instagram.com")
 VIDEO_WAIT = 600             # Instagram needs a few minutes to process a video
 MEDIA_EXT = (".jpg", ".jpeg", ".mp4")
 ERRORS = []
+
+# Instagram "action is blocked" (anti-spam) and "publishing limit reached". These are account
+# problems, not problems with the post: the account is paused instead of burning queue items.
+BLOCK_SUBCODES = {2207051: "action blocked", 2207042: "publishing limit reached"}
+BLOCK_HOURS = 48             # first pause; doubles on each repeat block, capped below
+BLOCK_MAX_HOURS = 168
+QUOTA_MARGIN = 2             # skip a post if fewer than this many API posts are left in Instagram's 24h quota
+JITTER_MAX = int(os.environ.get("PUBLISH_JITTER_SECONDS", "180"))  # random delay so posts aren't at :03 every time
+
+
+class BlockedError(RuntimeError):
+    def __init__(self, msg, reason):
+        super().__init__(msg)
+        self.reason = reason
+
+
+def block_reason(body):
+    """Return a short reason if an API error body means the account is blocked/limited, else None."""
+    try:
+        err = json.loads(body).get("error", {})
+    except Exception:
+        return None
+    sub = err.get("error_subcode")
+    if sub in BLOCK_SUBCODES:
+        return BLOCK_SUBCODES[sub]
+    if str(err.get("error_user_title", "")).lower() == "action is blocked":
+        return "action blocked"
+    return None
 
 
 # ---------------------------------------------------------------- helpers
@@ -75,10 +103,23 @@ class Api:
                 return json.loads(r.read())
         except urllib.error.HTTPError as e:
             body = e.read().decode(errors="replace")
-            raise RuntimeError(f"{method} {path} -> HTTP {e.code}: {body}") from None
+            msg = f"{method} {path} -> HTTP {e.code}: {body}"
+            reason = block_reason(body)
+            if reason:
+                raise BlockedError(msg, reason) from None
+            raise RuntimeError(msg) from None
 
     def me(self):
         return self._call("GET", "me", {"fields": "user_id,username"})
+
+    def quota_left(self, user_id):
+        """API posts left in Instagram's rolling 24h window, or None if it can't be read."""
+        try:
+            d = self._call("GET", f"{user_id}/content_publishing_limit",
+                           {"fields": "config,quota_usage"})["data"][0]
+            return int(d["config"]["quota_total"]) - int(d.get("quota_usage", 0))
+        except Exception:
+            return None
 
     def wait_ready(self, container_id, timeout=120):
         start = time.time()
@@ -187,26 +228,40 @@ def run_account(cfg, acc, now, dry_run, force):
     acc_id = acc["id"]
     state_path = ROOT / "state" / f"{acc_id}.json"
     state = load_json(state_path, {"last_slot": None, "posted": {}, "failed": {}, "attempts": {}})
+    state.setdefault("failed", {}); state.setdefault("attempts", {})
+    changed = requeue_blocked(acc_id, state, now)
+    if changed and not dry_run:
+        save_json(state_path, state)
     tz = ZoneInfo(acc.get("timezone", "UTC"))
     pending = [i for i in queue_items(acc_id) if i.name not in state["posted"] and i.name not in state["failed"]]
     summary(f"| {acc_id} | {len(pending)} posts left in queue |")
     if len(pending) < len(acc["slots"]) * 2:
         log(f"[{acc_id}] WARNING: only {len(pending)} posts left in the queue")
 
+    blocked_until = state.get("blocked_until")
+    if blocked_until and not force:
+        until = dt.datetime.fromisoformat(blocked_until)
+        if now < until:
+            left = (until - now).total_seconds() / 3600
+            log(f"[{acc_id}] paused: Instagram {state.get('block_reason', 'blocked')} "
+                f"(pause #{state.get('block_count', 1)}), retrying after {until:%Y-%m-%d %H:%M UTC} ({left:.0f} h left)")
+            summary(f"| {acc_id} | paused until {until:%Y-%m-%d %H:%M UTC} ({state.get('block_reason', 'blocked')}) |")
+            return changed
+
     slot = latest_slot(now, tz, acc["slots"])
     if not force:
         if slot is None:
-            return False
+            return changed
         if state.get("last_slot") == slot.isoformat():
             log(f"[{acc_id}] slot {slot:%Y-%m-%d %H:%M %Z} already filled")
-            return False
+            return changed
         late = (now - slot).total_seconds() / 60
         if late > GRACE_MINUTES:
             log(f"[{acc_id}] last slot {slot:%H:%M %Z} passed {late:.0f} min ago; waiting for the next one")
-            return False
+            return changed
     if not pending:
         log(f"[{acc_id}] queue is empty, nothing to post")
-        return False
+        return changed
 
     item = pending[0]
     imgs, caption, problems = validate_item(item)
@@ -228,7 +283,7 @@ def run_account(cfg, acc, now, dry_run, force):
     if not token:
         log(f"[{acc_id}] ERROR: secret {acc['token_secret']} is not set")
         ERRORS.append(acc_id)
-        return False
+        return changed
     api = Api(cfg.get("api_version", "v23.0"), token)
     try:
         user_id = api.me()["user_id"]
@@ -236,9 +291,35 @@ def run_account(cfg, acc, now, dry_run, force):
         # account/token problem: don't count it against the post, just alert
         log(f"[{acc_id}] ERROR: token for this account doesn't work: {e}")
         ERRORS.append(acc_id)
-        return False
+        return changed
+
+    left = api.quota_left(user_id)
+    if left is not None and left < QUOTA_MARGIN:
+        log(f"::warning::[{acc_id}] only {left} API posts left in Instagram's 24h quota; skipping this slot")
+        return changed
+    if not force and JITTER_MAX > 0:
+        d = random.randint(0, JITTER_MAX)
+        log(f"[{acc_id}] waiting {d}s before posting (jitter)")
+        time.sleep(d)
+
     try:
         media_id, link = api.publish(user_id, urls, caption)
+    except BlockedError as e:
+        # The account is blocked/limited, not the post: pause the account, keep the post queued.
+        n = int(state.get("block_count", 0)) + 1
+        hours = min(BLOCK_HOURS * 2 ** (n - 1), BLOCK_MAX_HOURS)
+        until = now + dt.timedelta(hours=hours)
+        first = not state.get("blocked_until")
+        state.update(blocked_until=until.isoformat(), block_count=n, block_reason=e.reason)
+        if slot:
+            state["last_slot"] = slot.isoformat()     # don't hammer the same slot again
+        save_json(state_path, state)
+        log(f"::warning::[{acc_id}] Instagram says '{e.reason}' while posting {item.name}. "
+            f"Pausing this account for {hours} h (until {until:%Y-%m-%d %H:%M UTC}); the post stays queued. {e}")
+        summary(f"| {acc_id} | BLOCKED ({e.reason}), paused {hours} h, {item.name} kept in queue |")
+        if first:
+            ERRORS.append(acc_id)                     # fail this one run so GitHub emails you, then stay quiet
+        return True
     except Exception as e:
         n = state["attempts"].get(item.name, 0) + 1
         state["attempts"][item.name] = n
@@ -253,10 +334,35 @@ def run_account(cfg, acc, now, dry_run, force):
     if slot:
         state["last_slot"] = slot.isoformat()
     state["attempts"].pop(item.name, None)
+    for k in ("blocked_until", "block_reason"):
+        state.pop(k, None)
+    state["block_count"] = 0
     save_json(state_path, state)
     log(f"[{acc_id}] published {item.name}: {link or media_id}")
     summary(f"| {acc_id} | posted {item.name} {link or ''} |")
     return True
+
+
+def requeue_blocked(acc_id, state, now):
+    """Posts marked failed only because the account was blocked go back in the queue."""
+    back = [k for k, why in state["failed"].items() if block_reason_from_text(why)]
+    for k in back:
+        state["failed"].pop(k, None)
+        state["attempts"].pop(k, None)
+    if back:
+        log(f"[{acc_id}] put {len(back)} post(s) back in the queue (they failed only because the account was blocked): "
+            + ", ".join(sorted(back)))
+        if not state.get("blocked_until"):
+            # the account was still blocked when these failed, so start with a pause rather than an instant retry
+            until = now + dt.timedelta(hours=BLOCK_HOURS)
+            state.update(blocked_until=until.isoformat(), block_count=1, block_reason="action blocked")
+            log(f"[{acc_id}] pausing until {until:%Y-%m-%d %H:%M UTC} before trying again")
+    return bool(back)
+
+
+def block_reason_from_text(text):
+    i = str(text).find("{")
+    return block_reason(str(text)[i:]) if i >= 0 else None
 
 
 def main():

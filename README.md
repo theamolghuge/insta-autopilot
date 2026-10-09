@@ -30,6 +30,11 @@ Rules the poster follows:
 - One post per time slot. If GitHub can't run within 2 hours of a slot, that slot is skipped (no bursts of late posts).
 - If the token is broken, nothing is used up; the run fails and GitHub emails you.
 - A post that fails 3 times is marked failed in `state/` and skipped.
+- If Instagram blocks the account ("action is blocked", subcode 2207051) or the 24h publishing limit is hit,
+  the post is NOT used up: the account is paused (48 h, doubling on each repeat block, max 7 days) and the post
+  stays first in the queue. The first block fails the run once so GitHub emails you; later skips are quiet.
+  The pause is in `state/<account>.json` (`blocked_until`). To end it early: Actions > Publish posts > `post-now`.
+- Each post waits a random 0-3 minutes after the slot so posting times don't look machine-exact.
 - Instagram allows at most 100 API posts per account per 24 hours.
 
 ## Secrets (Settings > Secrets and variables > Actions)
