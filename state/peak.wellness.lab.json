@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-08T21:00:00-04:00",
+  "last_slot": "2026-10-09T06:30:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -246,6 +246,12 @@
       "permalink": "https://www.instagram.com/p/DeQVtAGDUgW/",
       "posted_at": "2026-10-09T01:33:26.644790+00:00",
       "slot": "2026-10-08T21:00:00-04:00"
+    },
+    "0042-carousel-habits-stick": {
+      "media_id": "18135057463660217",
+      "permalink": "https://www.instagram.com/p/DeRTjE2EQym/",
+      "posted_at": "2026-10-09T10:33:59.808486+00:00",
+      "slot": "2026-10-09T06:30:00-04:00"
     }
   },
   "failed": {},
