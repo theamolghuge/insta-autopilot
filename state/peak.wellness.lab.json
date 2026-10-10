@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-10T12:00:00-04:00",
+  "last_slot": "2026-10-10T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -318,6 +318,12 @@
       "permalink": "https://www.instagram.com/p/DeUeZuNllBO/",
       "posted_at": "2026-10-10T16:04:27.168912+00:00",
       "slot": "2026-10-10T12:00:00-04:00"
+    },
+    "0054-carousel-protein-no-meat": {
+      "media_id": "18108594923120497",
+      "permalink": "https://www.instagram.com/p/DeUxvmoj65s/",
+      "posted_at": "2026-10-10T18:54:45.270090+00:00",
+      "slot": "2026-10-10T14:00:00-04:00"
     }
   },
   "failed": {},
