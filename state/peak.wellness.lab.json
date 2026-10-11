@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-11T12:00:00-04:00",
+  "last_slot": "2026-10-11T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -366,6 +366,12 @@
       "permalink": "https://www.instagram.com/p/DeXDByTlPX2/",
       "posted_at": "2026-10-11T16:04:19.790628+00:00",
       "slot": "2026-10-11T12:00:00-04:00"
+    },
+    "0062-carousel-snacks-under-200": {
+      "media_id": "18131609647686249",
+      "permalink": "https://www.instagram.com/p/DeXQ3HUm5gf/",
+      "posted_at": "2026-10-11T18:04:04.964437+00:00",
+      "slot": "2026-10-11T14:00:00-04:00"
     }
   },
   "failed": {},
