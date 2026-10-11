@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-05T20:00:00-04:00",
+  "last_slot": "2026-10-11T18:00:00-04:00",
   "posted": {
     "0001-single-01": {
       "media_id": "18487405435109798",
@@ -208,7 +208,7 @@
   },
   "failed": {},
   "attempts": {},
-  "blocked_until": "2026-10-11T19:03:05.851533+00:00",
-  "block_count": 1,
+  "blocked_until": "2026-10-15T22:03:21.729936+00:00",
+  "block_count": 2,
   "block_reason": "action blocked"
 }
