@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-12T12:00:00-04:00",
+  "last_slot": "2026-10-12T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -414,6 +414,12 @@
       "permalink": "https://www.instagram.com/p/DeZn1WOkUwr/",
       "posted_at": "2026-10-12T16:05:07.163688+00:00",
       "slot": "2026-10-12T12:00:00-04:00"
+    },
+    "0070-carousel-morning-energy": {
+      "media_id": "17875273512585654",
+      "permalink": "https://www.instagram.com/p/DeZ1qKwoJXk/",
+      "posted_at": "2026-10-12T18:04:05.674274+00:00",
+      "slot": "2026-10-12T14:00:00-04:00"
     }
   },
   "failed": {},
