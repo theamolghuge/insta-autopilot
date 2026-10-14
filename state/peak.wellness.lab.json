@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-14T10:00:00-04:00",
+  "last_slot": "2026-10-14T12:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -504,11 +504,15 @@
       "permalink": "https://www.instagram.com/p/DeejtZLG43E/",
       "posted_at": "2026-10-14T14:04:56.162392+00:00",
       "slot": "2026-10-14T10:00:00-04:00"
+    },
+    "0085-carousel-breakfast-4-ways": {
+      "media_id": "18126677092857568",
+      "permalink": "https://www.instagram.com/p/Dee4YRXCeiE/",
+      "posted_at": "2026-10-14T17:03:06.019210+00:00",
+      "slot": "2026-10-14T12:00:00-04:00"
     }
   },
   "failed": {},
-  "attempts": {
-    "0085-carousel-breakfast-4-ways": 1
-  },
+  "attempts": {},
   "block_count": 0
 }
