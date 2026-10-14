@@ -1,17 +1,20 @@
 # peak.wellness.lab: brand rules for posts
 
-Built the same way as fin.ance18 (simple text posts, a weekly batch, 8 posting slots a day) but runs completely on its own:
+Built the same way as fin.ance18 (simple text posts on black, a weekly batch, 8 posting slots a day) but runs completely on its own:
 own queue, state, token, look, content and posting times. Never reuse fin.ance18 content or styling.
 Renderer: `generator/peak.wellness.lab/brand.py` (the fin.ance18 renderer with this brand's colors and fonts).
 Batches: copy the latest `generator/peak.wellness.lab/batch_NNN.py` and change only the content lists and `START`.
 
-## Look (don't change)
-- Colors: plate `#FBF1EA` ground, navy `#1E2A38` text, tomato `#E5533D` for big numbers and the kicker rule,
-  tomato-deep `#B23A27` for small accent text (kickers, "Swipe"), tomato-soft `#FBDCD3` highlighter behind [bracketed] words.
-- Night version (navy ground, plate text) for stat posts: `brand.theme(dark=True)`; everything else stays light.
-- Type: DM Serif Display for quotes, headings and numbers; DM Sans for subtitles, body text, kicker and footer.
+## Look (don't change; set 2026-10-14)
+- Plain black slides: text centred in the middle, `@peak.wellness.lab` small at the bottom centre. Nothing else on the slide
+  (no kicker, no rules, no page numbers, no "Swipe").
+- Colors: black `#000000` ground, `#F5F5F2` text, `#C8C8C4` body text on point slides, tomato `#F2765F` for big numbers
+  and the [bracketed] key words (coloured text, no highlighter box), `#8C8C88` for the handle and source notes.
+- There is no light/night version any more: `brand.theme()` still exists so old batches run, but does nothing.
+- Type: DM Serif Display for quotes, headings and numbers; DM Sans for subtitles, body text, notes and handle.
 - Formats: `quote` (one sentence, one [highlight]), `stat` (big number + sentence + source note),
   carousel = `cover` + 3-6 `point` slides + `cta`. All 1080 x 1350.
+- Handle position: `HANDLE_POS` in `brand.py` (`"center"`, `"left"` or `"right"`).
 - DM Serif Display has no arrow glyph: don't use "→" or emoji in on-image text.
 
 ## Who it's for

@@ -15,19 +15,22 @@
   Not financial advice
   ```
 
-## Visual system (implemented in `generator/fin.ance18/brand.py`)
+## Visual system (implemented in `generator/fin.ance18/brand.py`, changed 2026-10-14)
+Plain black slides: text centred in the middle, `@fin.ance18` small at the bottom centre. Nothing else on the slide
+(no topic label, no rules, no page numbers, no swipe arrow, no disclaimer).
+
 | Token | Value | Use |
 |---|---|---|
-| Background | `#F6F1E7` warm paper | every slide |
-| Ink | `#16211B` | main text |
-| Accent | `#1F4D3A` deep money green | big numbers, labels, swipe arrow |
-| Highlighter | `#BEE8AA` mint | the key phrase, wrap it in `[brackets]` |
-| Muted | `#686E64` | footnotes |
+| Background | `#000000` black | every slide |
+| Ink | `#F5F5F2` | main text |
+| Soft | `#C8C8C4` | body text on point slides |
+| Accent | `#BEE8AA` mint | big numbers and the key phrase: wrap it in `[brackets]` (coloured, no highlighter box) |
+| Muted | `#8C8C88` | handle, source notes |
 
-- Fonts: DM Serif Display (headlines, numbers), Source Serif 4 (body), Inter (labels). All Google Fonts, OFL licensed, bundled in `generator/fin.ance18/fonts/`.
+- Fonts: DM Serif Display (headlines, numbers), Source Serif 4 (quotes, body), Inter (handle, notes). Bundled in `generator/fin.ance18/fonts/`.
 - Size: 1080 x 1350 (4:5 portrait). JPEG only.
-- Every slide: topic label top-left, `@fin.ance18` bottom-left, slide counter bottom-right on carousels. No disclaimer line on the image (it stays in the bio).
-- Templates: `quote()`, `stat()`, `cover()`, `point()`, `cta()`.
+- Handle position: `HANDLE_POS` in `brand.py` (`"center"`, `"left"` or `"right"`).
+- Templates (unchanged names): `quote()`, `stat()`, `cover()`, `point()`, `cta()`. `kicker`/`page` are still accepted but not drawn.
 
 ## Content rules
 - Every number is either computed in code (state the assumptions on the slide) or checked against an official source (IRS for limits). Limits change every year: update them each January.
