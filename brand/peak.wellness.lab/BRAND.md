@@ -7,12 +7,13 @@ Batches: copy the latest `generator/peak.wellness.lab/batch_NNN.py` and change o
 
 ## Look (don't change; set 2026-10-14)
 - Plain black slides with normal text: white text centred in the middle, `@peak.wellness.lab` small and grey at the bottom centre.
-- No typography styling: one font (DM Sans Regular), one colour, one size per slide (auto-fitted). No bold, no display
-  or serif fonts, no accent colours, no big numbers, no highlighter, no kicker, rules, page numbers or "Swipe".
-  Only source notes on stat posts are smaller and grey.
-- Colors: black `#000000`, text `#F5F5F2`, handle and source notes `#8C8C88`.
-- `brand.theme()` still exists so old batches run, but does nothing. `[brackets]` in content are removed; don't add new ones.
-- Formats: `quote` (one sentence), `stat` (number line + sentence + source note), carousel = `cover` + 3-6 `point` slides + `cta`.
+- No typography styling: one font (DM Sans Regular), one size per slide (auto-fitted). No bold, no display
+  or serif fonts, no big numbers, no highlighter box, no kicker, rules, page numbers or "Swipe".
+  Important words: wrap them in `[brackets]` and they are drawn in tomato `#F2765F` (one phrase per slide is plenty).
+The number on stat and point slides is tomato too. Only source notes on stat posts are smaller and grey.
+- Colors: black `#000000`, text `#F5F5F2`, tomato `#F2765F` for [important words] and numbers, handle and source notes `#8C8C88`.
+- `brand.theme()` still exists so old batches run, but does nothing.
+- Formats: `quote` (one sentence, one [highlight]), `stat` (number line + sentence + source note), carousel = `cover` + 3-6 `point` slides + `cta`.
   Each argument becomes its own centred paragraph. All 1080 x 1350.
 - Handle position: `HANDLE_POS` in `brand.py` (`"center"`, `"left"` or `"right"`).
 - No "→" or emoji in on-image text.

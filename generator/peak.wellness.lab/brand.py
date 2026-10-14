@@ -1,6 +1,6 @@
 """Renderer for @peak.wellness.lab: plain black slides with normal text centred in the middle, @handle at the bottom.
-Normal text only: DM Sans Regular, white, one size per slide. No accent colours, bold or display fonts;
-[brackets] left in batch content are simply removed."""
+Normal text only: DM Sans Regular, white, one size per slide. No bold or display fonts.
+Wrap important words in [square brackets] to colour them tomato."""
 from pathlib import Path
 from PIL import Image, ImageDraw, ImageFont
 
@@ -11,12 +11,13 @@ HANDLE_POS = "center"       # "left", "center" or "right"
 
 BG = (0, 0, 0)              # plain black
 INK = (245, 245, 242)       # all text
+ACCENT = (242, 118, 95)    # tomato: [important words] and the number on stat / point slides
 MUTED = (140, 140, 136)     # handle, source notes
 M = 96                      # side margin
 TEXT_W = W - 2 * M
 TOP, BOTTOM = 110, H - 150  # text area (keeps clear of the handle)
 LH, PARA_GAP = 1.4, 0.9     # line height and space between paragraphs (x font size)
-CTA_LINE2 = "Follow for one simple energy fix a day."
+CTA_LINE2 = "Follow for one simple [energy fix] a day."
 CTA_LINE3 = "Share it with a friend who needs more energy."
 
 
@@ -29,24 +30,37 @@ def font(size):
     f.set_variation_by_axes([14, 400]); return f
 
 # ---------------------------------------------------------------- shared layout (same in both brands' brand.py)
-# Normal text only: one regular font, one colour, one size per slide. [brackets] in the content are just removed.
+# Normal text: one regular font and one size per slide. [Bracketed] words are drawn in the accent colour.
 
 
 def clean(text):
     return " ".join(text.replace("[", "").replace("]", "").split())
 
 
+def parse(text):
+    out, inside = [], False
+    for tok in text.split():
+        if tok.startswith("["):
+            inside = True
+        end = "]" in tok
+        out.append((tok.replace("[", "").replace("]", ""), inside))
+        if end:
+            inside = False
+    return out
+
+
 def wrap(text, f, maxw):
+    """Lines of (word, highlighted, width)."""
     sp = f.getlength(" ")
     lines, cur, w = [], [], 0
-    for wd in clean(text).split():
+    for wd, hl in parse(text):
         l = f.getlength(wd)
         if cur and w + sp + l > maxw:
-            lines.append(" ".join(cur)); cur, w = [], 0
+            lines.append(cur); cur, w = [], 0
         w += (sp if cur else 0) + l
-        cur.append(wd)
+        cur.append((wd, hl, l))
     if cur:
-        lines.append(" ".join(cur))
+        lines.append(cur)
     return lines
 
 
@@ -75,8 +89,12 @@ def render(paras, path, sizes=(64, 58, 52, 48, 44, 40, 36)):
     d = ImageDraw.Draw(img)
     y = (TOP + BOTTOM - total) / 2
     for lines, f, lh, gap, colour in plan:
+        sp = f.getlength(" ")
         for line in lines:
-            d.text((W / 2, y), line, font=f, fill=colour, anchor="ma")
+            x = (W - sum(l for _, _, l in line) - sp * (len(line) - 1)) / 2
+            for wd, hl, l in line:
+                d.text((x, y), wd, font=f, fill=ACCENT if hl else colour, anchor="la")
+                x += l + sp
             y += lh
         y += gap
     hx = {"left": M, "center": W / 2, "right": W - M}[HANDLE_POS]
@@ -93,7 +111,7 @@ def quote(text, path, kicker=None, seed=0, page=None):
 
 
 def stat(number, text, path, note=None, kicker=None, seed=0):
-    render([(number, False), (text, False), (note, True)], path)
+    render([(f"[{clean(number)}]", False), (text, False), (note, True)], path)
 
 
 def cover(title, sub, path, kicker=None, seed=0):
@@ -101,7 +119,7 @@ def cover(title, sub, path, kicker=None, seed=0):
 
 
 def point(num, heading, body, path, kicker=None, page=None, seed=0):
-    render([(num, False), (heading, False), (body, False)], path)
+    render([(f"[{clean(num)}]", False), (heading, False), (body, False)], path)
 
 
 def cta(path, kicker=None, page=None, line1="Save this for later.", line2=CTA_LINE2, line3=CTA_LINE3):
