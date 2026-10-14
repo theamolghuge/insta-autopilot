@@ -6,16 +6,16 @@ Renderer: `generator/peak.wellness.lab/brand.py` (the fin.ance18 renderer with t
 Batches: copy the latest `generator/peak.wellness.lab/batch_NNN.py` and change only the content lists and `START`.
 
 ## Look (don't change; set 2026-10-14)
-- Plain black slides: text centred in the middle, `@peak.wellness.lab` small at the bottom centre. Nothing else on the slide
-  (no kicker, no rules, no page numbers, no "Swipe").
-- Colors: black `#000000` ground, `#F5F5F2` text, `#C8C8C4` body text on point slides, tomato `#F2765F` for big numbers
-  and the [bracketed] key words (coloured text, no highlighter box), `#8C8C88` for the handle and source notes.
-- There is no light/night version any more: `brand.theme()` still exists so old batches run, but does nothing.
-- Type: DM Serif Display for quotes, headings and numbers; DM Sans for subtitles, body text, notes and handle.
-- Formats: `quote` (one sentence, one [highlight]), `stat` (big number + sentence + source note),
-  carousel = `cover` + 3-6 `point` slides + `cta`. All 1080 x 1350.
+- Plain black slides with normal text: white text centred in the middle, `@peak.wellness.lab` small and grey at the bottom centre.
+- No typography styling: one font (DM Sans Regular), one colour, one size per slide (auto-fitted). No bold, no display
+  or serif fonts, no accent colours, no big numbers, no highlighter, no kicker, rules, page numbers or "Swipe".
+  Only source notes on stat posts are smaller and grey.
+- Colors: black `#000000`, text `#F5F5F2`, handle and source notes `#8C8C88`.
+- `brand.theme()` still exists so old batches run, but does nothing. `[brackets]` in content are removed; don't add new ones.
+- Formats: `quote` (one sentence), `stat` (number line + sentence + source note), carousel = `cover` + 3-6 `point` slides + `cta`.
+  Each argument becomes its own centred paragraph. All 1080 x 1350.
 - Handle position: `HANDLE_POS` in `brand.py` (`"center"`, `"left"` or `"right"`).
-- DM Serif Display has no arrow glyph: don't use "→" or emoji in on-image text.
+- No "→" or emoji in on-image text.
 
 ## Who it's for
 Busy adults in the **US and Europe** who want more energy and to lose fat through food and daily habits.
