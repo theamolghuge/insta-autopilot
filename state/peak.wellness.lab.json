@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-14T21:00:00-04:00",
+  "last_slot": "2026-10-15T06:30:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -528,6 +528,12 @@
       "permalink": "https://www.instagram.com/p/Def0ipmDeId/",
       "posted_at": "2026-10-15T01:52:02.548554+00:00",
       "slot": "2026-10-14T21:00:00-04:00"
+    },
+    "0089-carousel-comfort-swaps": {
+      "media_id": "17998163978827410",
+      "permalink": "https://www.instagram.com/p/DegwhwIliwO/",
+      "posted_at": "2026-10-15T10:33:45.864310+00:00",
+      "slot": "2026-10-15T06:30:00-04:00"
     }
   },
   "failed": {},
