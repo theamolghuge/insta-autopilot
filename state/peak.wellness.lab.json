@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-16T06:30:00-04:00",
+  "last_slot": "2026-10-16T10:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -576,11 +576,15 @@
       "permalink": "https://www.instagram.com/p/DejVV3Mkc_p/",
       "posted_at": "2026-10-16T10:34:49.023526+00:00",
       "slot": "2026-10-16T06:30:00-04:00"
+    },
+    "0097-carousel-fiber-day": {
+      "media_id": "18221229232342519",
+      "permalink": "https://www.instagram.com/p/Dejtj0JIK-K/",
+      "posted_at": "2026-10-16T14:04:52.586944+00:00",
+      "slot": "2026-10-16T10:00:00-04:00"
     }
   },
   "failed": {},
-  "attempts": {
-    "0097-carousel-fiber-day": 2
-  },
+  "attempts": {},
   "block_count": 0
 }
