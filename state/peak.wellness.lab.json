@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-16T17:00:00-04:00",
+  "last_slot": "2026-10-16T19:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -600,6 +600,12 @@
       "permalink": "https://www.instagram.com/p/DekjgXFCfrl/",
       "posted_at": "2026-10-16T21:57:04.900580+00:00",
       "slot": "2026-10-16T17:00:00-04:00"
+    },
+    "0101-carousel-cold-dark-walks": {
+      "media_id": "18109574639234365",
+      "permalink": "https://www.instagram.com/p/Dekx2akmbX-/",
+      "posted_at": "2026-10-17T00:03:49.762782+00:00",
+      "slot": "2026-10-16T19:00:00-04:00"
     }
   },
   "failed": {},
