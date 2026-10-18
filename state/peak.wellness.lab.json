@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-18T08:00:00-04:00",
+  "last_slot": "2026-10-18T12:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -648,6 +648,12 @@
       "permalink": "https://www.instagram.com/p/Deoxm47m8n-/",
       "posted_at": "2026-10-18T13:19:09.164579+00:00",
       "slot": "2026-10-18T08:00:00-04:00"
+    },
+    "0109-carousel-protein-day": {
+      "media_id": "18080822393432774",
+      "permalink": "https://www.instagram.com/p/DepIZinoIUd/",
+      "posted_at": "2026-10-18T16:35:35.379316+00:00",
+      "slot": "2026-10-18T12:00:00-04:00"
     }
   },
   "failed": {},
