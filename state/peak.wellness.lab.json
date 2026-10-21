@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-20T19:00:00-04:00",
+  "last_slot": "2026-10-20T21:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -720,6 +720,12 @@
       "permalink": "https://www.instagram.com/p/DevBGi3I0NN/",
       "posted_at": "2026-10-20T23:28:04.591213+00:00",
       "slot": "2026-10-20T19:00:00-04:00"
+    },
+    "0121-carousel-sheet-pan-4-ways": {
+      "media_id": "17878731654562084",
+      "permalink": "https://www.instagram.com/p/DevRgB3DWOi/",
+      "posted_at": "2026-10-21T01:51:58.501538+00:00",
+      "slot": "2026-10-20T21:00:00-04:00"
     }
   },
   "failed": {},
