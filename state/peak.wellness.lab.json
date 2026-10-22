@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-22T10:00:00-04:00",
+  "last_slot": "2026-10-22T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -756,6 +756,12 @@
       "permalink": "https://www.instagram.com/p/DezOUM1kdq5/",
       "posted_at": "2026-10-22T14:41:39.378652+00:00",
       "slot": "2026-10-22T10:00:00-04:00"
+    },
+    "0127-carousel-protein-add-ons": {
+      "media_id": "17864195640693527",
+      "permalink": "https://www.instagram.com/p/Dezq6CxCVTh/",
+      "posted_at": "2026-10-22T18:51:23.762173+00:00",
+      "slot": "2026-10-22T14:00:00-04:00"
     }
   },
   "failed": {},
