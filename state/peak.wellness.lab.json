@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-24T08:00:00-04:00",
+  "last_slot": "2026-10-24T12:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -804,6 +804,12 @@
       "permalink": "https://www.instagram.com/p/De4Qd8zm97e/",
       "posted_at": "2026-10-24T13:36:45.735527+00:00",
       "slot": "2026-10-24T08:00:00-04:00"
+    },
+    "0135-carousel-wfh-steps": {
+      "media_id": "18017161895987245",
+      "permalink": "https://www.instagram.com/p/De4n4koFEg-/",
+      "posted_at": "2026-10-24T16:59:48.504271+00:00",
+      "slot": "2026-10-24T12:00:00-04:00"
     }
   },
   "failed": {},
