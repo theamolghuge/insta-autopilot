@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-24T19:00:00-04:00",
+  "last_slot": "2026-10-24T21:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -828,6 +828,12 @@
       "permalink": "https://www.instagram.com/p/De5WDu-D1k6/",
       "posted_at": "2026-10-24T23:45:01.643946+00:00",
       "slot": "2026-10-24T19:00:00-04:00"
+    },
+    "0139-carousel-breakfast-swaps": {
+      "media_id": "18147048622572271",
+      "permalink": "https://www.instagram.com/p/De5jUpgkXwb/",
+      "posted_at": "2026-10-25T01:41:01.239026+00:00",
+      "slot": "2026-10-24T21:00:00-04:00"
     }
   },
   "failed": {},
