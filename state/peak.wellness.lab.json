@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-31T06:30:00-04:00",
+  "last_slot": "2026-10-31T12:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -966,6 +966,12 @@
       "permalink": "https://www.instagram.com/p/DfKBxDYlljq/",
       "posted_at": "2026-10-31T11:14:52.028318+00:00",
       "slot": "2026-10-31T06:30:00-04:00"
+    },
+    "0162-quote": {
+      "media_id": "18119589175962040",
+      "permalink": "https://www.instagram.com/p/DfKjF22mm3N/",
+      "posted_at": "2026-10-31T16:06:42.105355+00:00",
+      "slot": "2026-10-31T12:00:00-04:00"
     }
   },
   "failed": {},
