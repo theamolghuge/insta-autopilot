@@ -1,5 +1,5 @@
 {
-  "last_slot": "2026-10-31T12:00:00-04:00",
+  "last_slot": "2026-10-31T14:00:00-04:00",
   "posted": {
     "0001-quote": {
       "media_id": "18119285090515291",
@@ -972,6 +972,12 @@
       "permalink": "https://www.instagram.com/p/DfKjF22mm3N/",
       "posted_at": "2026-10-31T16:06:42.105355+00:00",
       "slot": "2026-10-31T12:00:00-04:00"
+    },
+    "0163-carousel-workday-energy": {
+      "media_id": "18108373493526040",
+      "permalink": "https://www.instagram.com/p/DfK97d-mSXN/",
+      "posted_at": "2026-10-31T19:59:36.816166+00:00",
+      "slot": "2026-10-31T14:00:00-04:00"
     }
   },
   "failed": {},
